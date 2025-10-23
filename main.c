@@ -1,8 +1,12 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include "utils.h"
 
 int main()
 {
-    printf("Hello world!\n");
+
+    int cond;
+
+    while(cond){
+
+    }
     return 0;
 }
