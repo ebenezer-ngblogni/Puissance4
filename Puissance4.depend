@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1761227917 source:/home/eben/Bureau/EILCO/Projets/Puissance4/main.c
+	<stdio.h>
+	<stdlib.h>
+
