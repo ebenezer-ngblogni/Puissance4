@@ -31,6 +31,13 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="display.c">
+			<Option compilerVar="CC" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="display.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="gameplay.c">
 			<Option compilerVar="CC" />
 			<Option target="&lt;{~None~}&gt;" />
