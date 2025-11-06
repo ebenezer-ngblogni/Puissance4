@@ -6,7 +6,7 @@ int menu(){
     printf("2-Jouer contre l'ordi\n");
     printf("3-Charger une partie\n");
     printf("4-Options de jeu\n");
-    printf("0-Retourner à windows\n");
+    printf("0-Retourner a windows\n");
     return getChoice();
 }
 
@@ -39,7 +39,7 @@ int getChoice(){
         break;
 
     default:
-        printf("Choix invalide");
+        printf("Choix invalide \n");
         menu();
         break;
     }

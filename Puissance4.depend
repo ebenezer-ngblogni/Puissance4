@@ -13,3 +13,17 @@
 1761230839 /home/eben/Bureau/EILCO/Projets/Puissance4/menu.h
 	"utils.h"
 
+1761641711 source:d:\genie_informatique\ing1_25-26\projet_be\puissance4\main.c
+	"utils.h"
+	"menu.c"
+
+1761229843 d:\genie_informatique\ing1_25-26\projet_be\puissance4\utils.h
+	<stdio.h>
+	<stdlib.h>
+
+1761505516 d:\genie_informatique\ing1_25-26\projet_be\puissance4\menu.c
+	"menu.h"
+
+1761312839 d:\genie_informatique\ing1_25-26\projet_be\puissance4\menu.h
+	"utils.h"
+
