@@ -20,5 +20,7 @@ struct game
 void twoPlayer();
 
 
+int winPosition(char **grid );
+
 
 #endif // GAMEPLAY_H_INCLUDED

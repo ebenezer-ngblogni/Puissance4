@@ -77,38 +77,17 @@ void freeGrid(char **grid, int line){
 
 
 // Fonction de calcul de position
-char **wherePosition(char **grid, int line,  int coup){
+char **wherePosition(char **grid, int line,  int coup, int isPlayer1){
     if(grid[0][coup-1] != ' '){
         printf("Cette colonne est pleine. Jouez ailleurs!");
         return grid;
     }
     for(int i = line-1; i>= 0; i--){
         if (grid[i][coup-1] == ' '){
-            grid[i][coup-1] = 'X';
+            if(isPlayer1)grid[i][coup-1] = 'X';
+            else grid[i][coup-1] = 'O';
            break;
         }
     }
     return grid;
-}
-
-int main(){
-  int line, col, coup, rate=1;
-  printf("Entrez le nombre de lignes : ");
-  scanf("%d", &line);
-  printf("Entrez le nombre de colonnes : ");
-  scanf("%d", &col);
-
-  char **grid = createGrid(line, col);
-  showGrid(grid, line, col);
-
-
-  printf("\n ou souhaitez-vous? \n");
-  scanf("%d", &coup);
-
-  showGrid(wherePosition(grid,line,coup),line,col);
-
-
-
-  freeGrid(grid,line);
-  return 0;
 }
