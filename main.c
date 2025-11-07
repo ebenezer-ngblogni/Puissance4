@@ -4,12 +4,15 @@
 
 int main()
 {
-    showPlayer1piece();
-    showPlayer2piece();
+    //showPlayer1piece();
+    //showPlayer2piece();
 
     int cond = 1;
     while(cond = menuPrincipal()){
 
     }
+
+
+
     return 0;
 }
