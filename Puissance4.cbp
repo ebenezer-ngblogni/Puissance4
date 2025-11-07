@@ -38,6 +38,13 @@
 		<Unit filename="display.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="file.c">
+			<Option compilerVar="CC" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="file.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="gameplay.c">
 			<Option compilerVar="CC" />
 			<Option target="&lt;{~None~}&gt;" />
@@ -53,6 +60,13 @@
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="menu.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="options.c">
+			<Option compilerVar="CC" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="options.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="utils.h">

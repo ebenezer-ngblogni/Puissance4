@@ -1,15 +1,22 @@
 # depslib dependency file v1.0
-1761233537 source:/home/eben/Bureau/EILCO/Projets/Puissance4/main.c
+1761312895 source:/home/eben/Bureau/EILCO/Projets/Puissance4/main.c
 	"utils.h"
 	"menu.c"
+	"display.c"
 
 1761228444 /home/eben/Bureau/EILCO/Projets/Puissance4/utils.h
 	<stdio.h>
 	<stdlib.h>
 
-1761231151 /home/eben/Bureau/EILCO/Projets/Puissance4/menu.c
+1761312921 /home/eben/Bureau/EILCO/Projets/Puissance4/menu.c
 	"menu.h"
 
 1761230839 /home/eben/Bureau/EILCO/Projets/Puissance4/menu.h
+	"utils.h"
+
+1761312602 /home/eben/Bureau/EILCO/Projets/Puissance4/display.c
+	"display.h"
+
+1761231901 /home/eben/Bureau/EILCO/Projets/Puissance4/display.h
 	"utils.h"
 

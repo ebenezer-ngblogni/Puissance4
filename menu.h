@@ -2,8 +2,8 @@
 #define MENU_H_INCLUDED
 #include "utils.h"
 
-int menu();
-int getChoice();
+int menuPrincipal();
+int getChoiceMenuPrincipal();
 
 
 #endif // MENU_H_INCLUDED
