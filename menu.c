@@ -1,4 +1,6 @@
 #include "menu.h"
+#include "gameplay.h"
+
 
 int menuPrincipal(){
     printf("Bienvenue dans le jeu puissance 4\nVeuillez choisir une option:\n");
@@ -22,7 +24,7 @@ int getChoiceMenuPrincipal(){
         break;
 
     case 1 :
-        //twoPlayer();
+        twoPlayer();
         return 1;
         break;
 

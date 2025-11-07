@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1762533109 source:/home/eben/Bureau/EILCO/Projets/Puissance4/main.c
+1762535881 source:/home/eben/Bureau/EILCO/Projets/Puissance4/main.c
 	"utils.h"
 	"menu.c"
 	"display.c"
@@ -9,8 +9,9 @@
 	<stdio.h>
 	<stdlib.h>
 
-1762511417 /home/eben/Bureau/EILCO/Projets/Puissance4/menu.c
+1762535940 /home/eben/Bureau/EILCO/Projets/Puissance4/menu.c
 	"menu.h"
+	"gameplay.h"
 
 1761644396 /home/eben/Bureau/EILCO/Projets/Puissance4/menu.h
 	"utils.h"
@@ -21,10 +22,11 @@
 1762532506 /home/eben/Bureau/EILCO/Projets/Puissance4/display.h
 	"utils.h"
 
-1762533441 /home/eben/Bureau/EILCO/Projets/Puissance4/gameplay.c
-	"gameplay.h"
+1762535927 /home/eben/Bureau/EILCO/Projets/Puissance4/gameplay.c
 	<unistd.h>
+	"gameplay.h"
+	"gameplay.h"
 
-1762533131 /home/eben/Bureau/EILCO/Projets/Puissance4/gameplay.h
+1762534189 /home/eben/Bureau/EILCO/Projets/Puissance4/gameplay.h
 	"utils.h"
 

@@ -11,22 +11,9 @@ int main()
     while(cond = menuPrincipal()){
 
     }*/
-    /*int line, col, coup, rate=1;
-    printf("Entrez le nombre de lignes : ");
-    scanf("%d", &line);
-    printf("Entrez le nombre de colonnes : ");
-    scanf("%d", &col);
-
-    char **grid = createGrid(line, col);
-    showGrid(grid, line, col);
-
-
-    printf("\n ou souhaitez-vous? \n");
-    scanf("%d", &coup);
-
-    showGrid(wherePosition(grid,line,coup, 0),line,col);
-
-    freeGrid(grid,line);*/
+    /* showPlayer1piece();
+    printf("\n");
+    showPlayer2piece(); */
     twoPlayer();
 
     return 0;
