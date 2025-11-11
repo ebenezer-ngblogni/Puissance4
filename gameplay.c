@@ -18,7 +18,7 @@ void twoPlayer(){
             {
                 printf("Coup invalide");
             }
-
+            
             printf("\nJoueur %d entrez votre colonne : ", isPlayer1? 1 : 2);
             scanf("%d", &coup);
         }while(coup < 1 || coup > col);

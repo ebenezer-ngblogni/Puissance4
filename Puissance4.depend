@@ -30,3 +30,32 @@
 1762534189 /home/eben/Bureau/EILCO/Projets/Puissance4/gameplay.h
 	"utils.h"
 
+1762537694 source:d:\genie_informatique\ing1_25-26\projet_be\puissance4\main.c
+	"utils.h"
+	"menu.c"
+	"display.c"
+	"gameplay.c"
+
+1762869240 d:\genie_informatique\ing1_25-26\projet_be\puissance4\utils.h
+
+1762869488 d:\genie_informatique\ing1_25-26\projet_be\puissance4\menu.c
+	"menu.h"
+	"gameplay.h"
+
+1762533592 d:\genie_informatique\ing1_25-26\projet_be\puissance4\menu.h
+	"utils.h"
+
+1762868475 d:\genie_informatique\ing1_25-26\projet_be\puissance4\gameplay.h
+	"utils.h"
+
+1762533676 d:\genie_informatique\ing1_25-26\projet_be\puissance4\display.c
+	"display.h"
+
+1762533676 d:\genie_informatique\ing1_25-26\projet_be\puissance4\display.h
+	"utils.h"
+
+1762869331 d:\genie_informatique\ing1_25-26\projet_be\puissance4\gameplay.c
+	<unistd.h>
+	"gameplay.h"
+	"gameplay.h"
+

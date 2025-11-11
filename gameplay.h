@@ -23,4 +23,5 @@ void twoPlayer();
 int winPosition(char **grid ,int line, int col, char symbole);
 
 
+
 #endif // GAMEPLAY_H_INCLUDED

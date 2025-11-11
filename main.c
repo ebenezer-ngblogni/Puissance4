@@ -6,15 +6,16 @@
 
 int main()
 {
+    
 
-    /*int cond = 1;
+    int cond = 1;
     while(cond = menuPrincipal()){
 
-    }*/
+    }
     /* showPlayer1piece();
     printf("\n");
     showPlayer2piece(); */
-    twoPlayer();
+    //twoPlayer();
 
     return 0;
 }
