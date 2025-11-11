@@ -6,16 +6,29 @@
 
 int main()
 {
-    
+    if(IS_WIN){
+        system("chcp 65001");
+    }
 
     int cond = 1;
     while(cond = menuPrincipal()){
 
-    }
+    }*/
     /* showPlayer1piece();
     printf("\n");
-    showPlayer2piece(); */
+    showPlayer2piece();*/
     //twoPlayer();
+
+    /*#ifdef _WIN32
+    printf("Je suis sous Windows\n");
+    #ifdef __linux__
+        printf("Je suis sous Linux\n");
+    #endif
+    Nisrine Bajja
+    19:12
+    #ifdef _WIN32
+        system("chcp 65001");
+    #endif*/
 
     return 0;
 }
