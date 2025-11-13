@@ -1,7 +1,7 @@
 #include <unistd.h>
 #include <string.h>
 #include "gameplay.h"
-#include "gameplay.h"
+#include "display.h"
 
 void twoPlayer()
 {
@@ -34,16 +34,35 @@ void twoPlayer()
             system("clear");
         }
 
+        /* Si un joueur a gagne la partie (sinon si la personne n'a gagne), 
+        on le declare vainqueur (sinon "Match NULL") et retour au menu */
         showGrid(wherePosition(grid, line, coup, isPlayer1), line, col);
         if (winPosition(grid, line, col, isPlayer1 ? 'X' : 'O'))
         {
             printf("\nLe joueur %d a gagné !!!!\n", isPlayer1 = isPlayer1 ? 1 : 2);
             break;
+        } else if (loseGame(grid, col))
+        {
+            printf("\n Match NULL, Aucun gagnant !!! \n");
+            break;
         }
+        
         isPlayer1 = isPlayer1 ? 0 : 1;
     }
 
     freeGrid(grid, line);
+}
+
+int loseGame(char **grid , int col){
+    int cp=0;
+    for(int j = 0; j < col; j++){
+        if(grid[0][j]!=' ')
+            cp += 1;
+    }
+
+    if(cp == col)
+        return 1;
+    return 0;
 }
 
 int winPosition(char **grid, int line, int col, char symbole)

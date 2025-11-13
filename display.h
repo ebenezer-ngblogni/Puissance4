@@ -15,3 +15,6 @@ char **wherePosition(char **grid, int line, int coup, int isPlayer1);
 
 
 #endif // DISPLAY_H_INCLUDED
+#ifdef _WIN32 
+#include <windows.h>
+#endif

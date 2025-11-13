@@ -4,16 +4,22 @@
 #include "gameplay.c"
 
 
+
+
 int main()
 {
+
     if(IS_WIN){
         system("chcp 65001");
+        //showPlayer2piece();
     }
+ 
 
     int cond = 1;
     while(cond = menuPrincipal()){
 
-    }*/
+    }
+
     /* showPlayer1piece();
     printf("\n");
     showPlayer2piece();*/
