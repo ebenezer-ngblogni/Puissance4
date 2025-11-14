@@ -12,6 +12,8 @@ void pause_pour_continuer(void) {
 
 int main()
 {
+    profil_initialiser_dossier();
+
     Profil profil_actuel;
 
     int choix_menu = 0;

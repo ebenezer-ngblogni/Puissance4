@@ -2,6 +2,24 @@
 #include "profil.h"
 #include "menu.h"
 
+#ifdef _WIN32
+    #include <direct.h> // Pour _mkdir (Windows)
+#else
+    #include <sys/stat.h> // Pour mkdir (Linux/macOS)
+    #include <sys/types.h> // Nécessaire pour stat.h
+#endif
+
+
+void profil_initialiser_dossier() {
+    #ifdef _WIN32
+        // Syntaxe Windows
+        _mkdir("files");
+    #else
+        // Syntaxe Linux/macOS
+        mkdir("files", 0777);
+    #endif
+}
+
 int profil_valider_pseudo(char* pseudo) {
 
     if (pseudo == NULL || strlen(pseudo) == 0) {
@@ -212,3 +230,4 @@ Profil profil_login_ou_creer() {
 
     return profil_actif;
 }
+

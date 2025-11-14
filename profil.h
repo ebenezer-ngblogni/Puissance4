@@ -19,5 +19,6 @@ Profil profil_charger(char* pseudo);
 void profil_sauvegarder(Profil* p);
 Profil profil_creer_defaut(char* pseudo);
 void profil_modifier_parametres(Profil* p);
+void profil_initialiser_dossier();
 
 #endif
