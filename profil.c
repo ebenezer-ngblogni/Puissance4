@@ -52,7 +52,6 @@ Profil profil_charger(char* pseudo) {
 
     char nom_fichier[256];
 
-    // Construire le chemin du fichier, exactement comme dans profil_sauvegarder
     sprintf(nom_fichier, "files/%s.config.txt", pseudo);
 
     FILE * f = fopen(nom_fichier, "r");
@@ -69,7 +68,7 @@ Profil profil_charger(char* pseudo) {
                &p.forme_pions,
                &p.mode_par_defaut) == 6)
     {
-        // Succès ! Le profil 'p' est maintenant rempli.
+
     }
     else {
         p.pseudo[0] = '\0';
@@ -173,6 +172,7 @@ Profil profil_login_ou_creer() {
 
     Profil profil_actif;
     char pseudo_saisi[50]; // Un buffer pour stocker la saisie
+    char buffer_pause[10];
 
     // 1. Afficher le message d'accueil
     menu_afficher_bienvenue();
@@ -185,8 +185,8 @@ Profil profil_login_ou_creer() {
 
         // 4. Valider le format du pseudo
         if (profil_valider_pseudo(pseudo_saisi) == 0) {
-            menu_afficher_erreur_pseudo(); // "Pseudo invalide..."
-            continue; // Recommencer la boucle
+            menu_afficher_erreur_pseudo();
+            continue;
         }
 
         // 5. Le format est bon, on tente de charger le fichier
@@ -196,18 +196,19 @@ Profil profil_login_ou_creer() {
         if (profil_actif.pseudo[0] != '\0') {
             // SUCCÈS : Le profil existait
             menu_afficher_bon_retour(profil_actif.pseudo);
-            break; // Sortir de la boucle while(1)
+            printf("\nAppuyez sur Entree pour continuer...");
+            menu_lire_chaine_securise(buffer_pause, 10);
+            break;
 
         } else {
             // ÉCHEC : Le profil n'existe pas, c'est un nouveau joueur
             menu_afficher_nouveau_profil(pseudo_saisi);
-
-            // On crée le profil par défaut et on le stocke
             profil_actif = profil_creer_defaut(pseudo_saisi);
-            break; // Sortir de la boucle while(1)
+            printf("\nAppuyez sur Entree pour continuer...");
+            menu_lire_chaine_securise(buffer_pause, 10);
+            break;
         }
     }
 
-    // 7. Renvoyer le profil (soit chargé, soit nouvellement créé)
     return profil_actif;
 }

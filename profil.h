@@ -8,7 +8,7 @@ struct Profil{
     int grille_lignes;
     int grille_cols;
     float temps_par_coup;
-    int forme_pions;      // fonction avec switch case
+    int forme_pions;
     int mode_par_defaut;
 };
 typedef struct Profil Profil;

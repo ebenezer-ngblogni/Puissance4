@@ -10,7 +10,7 @@
 /**
  * Helper interne pour nettoyer la console (multi-plateforme).
  */
-void menu_clear_screen(void) {
+void menu_clear_screen() {
     #ifdef _WIN32
         system("cls"); // Commande Windows
     #else
@@ -33,7 +33,7 @@ void menu_lire_chaine_securise(char* buffer, int taille) {
  * Helper interne pour lire un entier de manière robuste.
  * Lit une ligne complète et la convertit.
  */
-int menu_lire_choix_int(void) {
+int menu_lire_choix_int() {
     char buffer[100];
     menu_lire_chaine_securise(buffer, 100);
     // Convertit la chaîne en entier (base 10)
@@ -43,7 +43,7 @@ int menu_lire_choix_int(void) {
 /**
  * Helper interne pour lire un float de manière robuste.
  */
-float menu_lire_choix_float(void) {
+float menu_lire_choix_float() {
     char buffer[100];
     menu_lire_chaine_securise(buffer, 100);
     // Convertit la chaîne en float/double
@@ -54,7 +54,7 @@ float menu_lire_choix_float(void) {
 /* FONCTIONS DE LOGIN / ACCUEIL                       */
 /* ================================================================== */
 
-void menu_afficher_bienvenue(void) {
+void menu_afficher_bienvenue() {
     menu_clear_screen();
     printf("==============================\n");
     printf("  BIENVENUE DANS PUISSANCE 4 !\n");
@@ -67,7 +67,7 @@ void menu_demander_pseudo(char* buffer_pseudo) {
     menu_lire_chaine_securise(buffer_pseudo, 50);
 }
 
-void menu_afficher_erreur_pseudo(void) {
+void menu_afficher_erreur_pseudo() {
     printf("-> Erreur : Pseudo invalide. Le format est incorrect.\n\n");
 }
 
@@ -85,7 +85,7 @@ void menu_afficher_nouveau_profil(char* pseudo) {
 
 int menu_afficher_principal(Profil* p) {
     menu_clear_screen();
-    printf("=== MENU PRINCIPAL ===\n");
+    printf("\n=== MENU PRINCIPAL ===\n");
     printf("Utilisateur : %s\n", p->pseudo);
     printf("----------------------\n");
 
@@ -120,7 +120,7 @@ void menu_afficher_au_revoir(void) {
 
 int menu_afficher_menu_parametres(Profil* p) {
     menu_clear_screen();
-    printf("=== PARAMETRES (Profil: %s) ===\n", p->pseudo);
+    printf("\n=== PARAMETRES (Profil: %s) ===\n", p->pseudo);
     printf(" 1. Modifier la Grille (Actuel: %dx%d)\n", p->grille_lignes, p->grille_cols);
     printf(" 2. Modifier le Temps/coup (Actuel: %.1fs)\n", p->temps_par_coup);
     printf(" 3. Modifier la Forme des Pions (Actuel: %d)\n", p->forme_pions);
@@ -134,24 +134,21 @@ int menu_afficher_menu_parametres(Profil* p) {
 void menu_demander_nouvelle_grille(int* lignes, int* cols) {
     printf("\n--- Modification Grille (Min 4x4, Max 20x20) ---\n");
 
-    // Boucle de validation pour les lignes
     do {
         printf("Nouvelle hauteur (lignes) : ");
         *lignes = menu_lire_choix_int();
     } while (*lignes < 4 || *lignes > 20);
 
-    // Boucle de validation pour les colonnes
     do {
         printf("Nouvelle largeur (colonnes) : ");
         *cols = menu_lire_choix_int();
     } while (*cols < 4 || *cols > 20);
 }
 
-float menu_demander_nouveau_tp(void) {
+float menu_demander_nouveau_tp() {
     float tp = 0;
     printf("\n--- Modification Temps (Min 5s, Max 60s) ---\n");
 
-    // Boucle de validation pour le temps
     do {
         printf("Nouveau temps par coup (en secondes) : ");
         tp = menu_lire_choix_float();
@@ -160,14 +157,13 @@ float menu_demander_nouveau_tp(void) {
     return tp;
 }
 
-int menu_demander_nouvelle_forme(void) {
+int menu_demander_nouvelle_forme() {
     int forme = 0;
     printf("\n--- Modification Pions ---\n");
     printf(" 1. Forme (X / O)\n");
     printf(" 2. Forme (A / B)\n");
     printf(" 3. Forme (R / B) (Couleurs)\n");
 
-    // Boucle de validation pour la forme
     do {
         printf("Votre choix (1, 2 ou 3) : ");
         forme = menu_lire_choix_int();
@@ -176,11 +172,10 @@ int menu_demander_nouvelle_forme(void) {
     return forme;
 }
 
-int menu_demander_nouveau_mode_defaut(void) {
+int menu_demander_nouveau_mode_defaut() {
     int mode = 0;
     printf("\n--- Modification Mode par defaut ---\n");
 
-    // Boucle de validation pour le mode
     do {
         printf(" 1. Joueur vs Joueur (PvP)\n");
         printf(" 2. Joueur vs IA (PvIA)\n");
@@ -195,10 +190,8 @@ int menu_demander_nouveau_mode_defaut(void) {
 /* MESSAGES D'ERREUR                            */
 /* ================================================================== */
 
-void menu_afficher_erreur_choix_invalide(void) {
+void menu_afficher_erreur_choix_invalide() {
     printf("\n-> Choix invalide. Veuillez reessayer.\n");
-
-    // Petite pause pour que l'utilisateur voie le message
     printf("Appuyez sur Entree pour continuer...");
     char temp[2]; // Buffer temporaire juste pour attendre une entrée
     menu_lire_chaine_securise(temp, 2);
