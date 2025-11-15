@@ -12,6 +12,11 @@ void pause_pour_continuer(void) {
 
 int main()
 {
+        if(IS_WIN){
+        system("chcp 65001");
+        //showPlayer2piece();
+    }
+    
     profil_initialiser_dossier();
 
     Profil profil_actuel;

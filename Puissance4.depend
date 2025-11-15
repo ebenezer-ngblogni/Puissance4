@@ -30,12 +30,17 @@
 1762534189 /home/eben/Bureau/EILCO/Projets/Puissance4/gameplay.h
 	"utils.h"
 
+<<<<<<< HEAD
 1762871096 source:/home/watio/Documents/jeuC/Puissance4/main.c
+=======
+1762886814 source:d:\genie_informatique\ing1_25-26\projet_be\puissance4\main.c
+>>>>>>> aa108c3088d6cc4c5d27a57bb9b775fb9ae41d53
 	"utils.h"
 	"menu.c"
 	"display.c"
 	"gameplay.c"
 
+<<<<<<< HEAD
 1762706770 /home/watio/Documents/jeuC/Puissance4/utils.h
 	<stdio.h>
 	<stdlib.h>
@@ -60,4 +65,32 @@
 	<unistd.h>
 	"gameplay.h"
 	"gameplay.h"
+=======
+1762888522 d:\genie_informatique\ing1_25-26\projet_be\puissance4\utils.h
+	<stdio.h>
+	<stdlib.h>
+
+1762891154 d:\genie_informatique\ing1_25-26\projet_be\puissance4\menu.c
+	"menu.h"
+	"gameplay.h"
+
+1762533592 d:\genie_informatique\ing1_25-26\projet_be\puissance4\menu.h
+	"utils.h"
+
+1762890105 d:\genie_informatique\ing1_25-26\projet_be\puissance4\gameplay.h
+	"utils.h"
+
+1762889155 d:\genie_informatique\ing1_25-26\projet_be\puissance4\display.c
+	"display.h"
+
+1762886542 d:\genie_informatique\ing1_25-26\projet_be\puissance4\display.h
+	"utils.h"
+	<windows.h>
+
+1762890917 d:\genie_informatique\ing1_25-26\projet_be\puissance4\gameplay.c
+	<unistd.h>
+	<string.h>
+	"gameplay.h"
+	"display.h"
+>>>>>>> aa108c3088d6cc4c5d27a57bb9b775fb9ae41d53
 

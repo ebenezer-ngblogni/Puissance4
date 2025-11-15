@@ -10,6 +10,7 @@ void showPlayer2piece() {
     printf("\033[0;31m");
     printf("\u2B24");
     printf("\033[0m");
+    
 }
 
 // Creation de la grille de jeu avec allocation dynamique
@@ -19,7 +20,7 @@ char **createGrid(int line, int col){
         printf("Erreur lors de l'allocation de la ligne\n");
     }
     for(int i = 0; i < line ; i++){
-        grid[i] = malloc(col * sizeof(char*));
+        grid[i] = malloc(col *sizeof(char*));
         if(grid[i] == NULL){
             printf("Erreur lors de l'allocation de la colonne\n");
         }
@@ -27,7 +28,8 @@ char **createGrid(int line, int col){
 
     for (int i = 0; i < line; i++){
         for(int j = 0; j < col; j++){
-            grid[i][j] = ' '; // Initialisation des cases vides avec un espace
+            // Initialisation des cases vides avec un espace
+            grid[i][j] = ' '; 
         }
     }
     return grid;
@@ -38,7 +40,7 @@ char **createGrid(int line, int col){
 void showGrid(char **grid, int line, int col){
     int i,j,k;
 
-    printf("\033[1;34m--- PUISSANCE 4 ---\033[0m\n");
+    printf("\n \033[1;34m--- PUISSANCE 4 ---\033[0m \n");
     for(i = 1; i <= col; i++){
         printf("  %d ", i);
     }
@@ -54,8 +56,16 @@ void showGrid(char **grid, int line, int col){
         if(i < line){
              printf("\n| ");
             for(j =0; j< col; j++){
-                //grid[i][j] = ' ';
-                printf("%c", grid[i][j]);
+
+                if (grid[i][j] == 'X') {
+                    printf("\033[1;34mX\033[0m");
+
+                } else if (grid[i][j] == 'O') {
+                    printf("\033[1;31mO\033[0m"); 
+                } else {
+                    printf("%c", grid[i][j]); 
+                }
+        
                 printf(" | ");
                 //printf("---");
             }
@@ -84,8 +94,10 @@ char **wherePosition(char **grid, int line,  int coup, int isPlayer1){
     }
     for(int i = line-1; i>= 0; i--){
         if (grid[i][coup-1] == ' '){
-            if(isPlayer1)grid[i][coup-1] = 'X';
-            else grid[i][coup-1] = 'O';
+            if(isPlayer1)
+                grid[i][coup-1] = 'X';
+            else 
+                grid[i][coup-1] = 'O';
            break;
         }
     }
