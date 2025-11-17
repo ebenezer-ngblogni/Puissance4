@@ -1,8 +1,10 @@
 #include "utils.h"
 #include "menu.h"
 #include "profil.h"
-#include "display.c"
-#include "gameplay.c"
+//#include "display.c"
+//#include "gameplay.c"
+//#include "menu.c"
+//#include "profil.c"
 
 void pause_pour_continuer(void) {
     printf("\nAppuyez sur Entree pour continuer...");
@@ -38,7 +40,7 @@ int main()
 
                 case 1:
                     printf("\n-> Lancement de 'Nouvelle Partie'...\n");
-                    twoPlayer();
+                    twoPlayer(profil_actuel);
                     break;
 
                 case 2:

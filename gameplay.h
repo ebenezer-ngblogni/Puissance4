@@ -1,6 +1,7 @@
 #ifndef GAMEPLAY_H_INCLUDED
 #define GAMEPLAY_H_INCLUDED
 #include "utils.h"
+#include "profil.h"
 
 typedef struct size
 {
@@ -17,7 +18,7 @@ struct game
 };
 
 
-void twoPlayer();
+void twoPlayer(Profil p);
 
 
 int winPosition(char **grid ,int line, int col, char symbole);

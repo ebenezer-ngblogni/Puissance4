@@ -104,8 +104,8 @@ Profil profil_creer_defaut(char* pseudo) {
 
     strcpy(p.pseudo, pseudo);
 
-    p.grille_cols = 7;
-    p.grille_lignes = 6;
+    p.grille_cols = MIN_COL;
+    p.grille_lignes = MIN_LINE;
     p.temps_par_coup = 30.0;
     p.forme_pions = 1;
     p.mode_par_defaut = 1;

@@ -9,6 +9,7 @@
 #define MIN_COL 7
 #define MIN_LINE 6
 
+
 #ifdef _WIN32
     #define IS_LINUX 0
     #define IS_WIN 1
