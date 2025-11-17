@@ -84,7 +84,7 @@ void menu_afficher_nouveau_profil(char* pseudo) {
 /* ================================================================== */
 
 int menu_afficher_principal(Profil* p) {
-    menu_clear_screen();
+    //menu_clear_screen();
     printf("\n=== MENU PRINCIPAL ===\n");
     printf("Utilisateur : %s\n", p->pseudo);
     printf("----------------------\n");
@@ -132,17 +132,17 @@ int menu_afficher_menu_parametres(Profil* p) {
 }
 
 void menu_demander_nouvelle_grille(int* lignes, int* cols) {
-    printf("\n--- Modification Grille (Min 4x4, Max 20x20) ---\n");
+    printf("\n--- Modification Grille (Min 6x7, Max 20x20) ---\n");
 
     do {
         printf("Nouvelle hauteur (lignes) : ");
         *lignes = menu_lire_choix_int();
-    } while (*lignes < 4 || *lignes > 20);
+    } while (*lignes < MIN_LINE || *lignes > 20);
 
     do {
         printf("Nouvelle largeur (colonnes) : ");
         *cols = menu_lire_choix_int();
-    } while (*cols < 4 || *cols > 20);
+    } while (*cols < MIN_COL || *cols > 20);
 }
 
 float menu_demander_nouveau_tp() {

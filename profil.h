@@ -3,7 +3,7 @@
 #include "utils.h"
 
 
-struct Profil{
+struct profil{
     char pseudo[50];
     int grille_lignes;
     int grille_cols;
@@ -11,7 +11,7 @@ struct Profil{
     int forme_pions;
     int mode_par_defaut;
 };
-typedef struct Profil Profil;
+typedef struct profil Profil;
 
 Profil profil_login_ou_creer();
 int profil_valider_pseudo(char* pseudo);

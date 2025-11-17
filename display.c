@@ -41,11 +41,16 @@ void showGrid(char **grid, int line, int col){
     int i,j,k;
 
     printf("\n \033[1;34m--- PUISSANCE 4 ---\033[0m \n");
+    
+    //Affichage des indices des colonnes au-dessus de la grille
     for(i = 1; i <= col; i++){
         printf("  %d ", i);
     }
     printf("\n");
+
+
     for(i = 0; i <= line; i++ ){
+        //tracage de ligne de la grille
         if(i != 0){
             printf("+---+");
             for(k =0; k< col-1; k++){
@@ -67,12 +72,12 @@ void showGrid(char **grid, int line, int col){
                 }
         
                 printf(" | ");
-                //printf("---");
             }
             printf("\n");
         }
     }
     printf("\n");
+    //Affichage des indices des colonnes en-dessous de la grille
     for(i = 1; i <= col; i++){
         printf("  %d ", i);
     }
@@ -88,10 +93,7 @@ void freeGrid(char **grid, int line){
 
 // Fonction de calcul de position
 char **wherePosition(char **grid, int line,  int coup, int isPlayer1){
-    if(grid[0][coup-1] != ' '){
-        printf("Cette colonne est pleine. Jouez ailleurs!");
-        return grid;
-    }
+    
     for(int i = line-1; i>= 0; i--){
         if (grid[i][coup-1] == ' '){
             if(isPlayer1)
