@@ -1,10 +1,10 @@
 #include "utils.h"
 #include "menu.h"
 #include "profil.h"
-//#include "display.c"
-//#include "gameplay.c"
-//#include "menu.c"
-//#include "profil.c"
+#include "display.c"
+#include "gameplay.c"
+#include "menu.c"
+#include "profil.c"
 
 void pause_pour_continuer(void) {
     printf("\nAppuyez sur Entree pour continuer...");
@@ -18,7 +18,7 @@ int main()
         system("chcp 65001");
         //showPlayer2piece();
     }
-    
+
     profil_initialiser_dossier();
 
     Profil profil_actuel;
