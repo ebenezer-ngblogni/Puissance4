@@ -1,14 +1,19 @@
 #include "gameplay.h"
 #include "display.h"
+#include "profil.h"
 
-void twoPlayer()
+void twoPlayer(Profil p)
 {
 
-    int line, col, coup = -43, rate = 1, isPlayer1 = 1, continu = 1;
-    printf("Entrez le nombre de lignes : ");
+    int line = p.grille_lignes, col=p.grille_cols;
+    int coup , rate = 1, isPlayer1 = 1, continu = 1;
+    
+    /*printf("Entrez le nombre de lignes : ");
     scanf("%d", &line);
     printf("Entrez le nombre de colonnes : ");
-    scanf("%d", &col);
+    scanf("%d", &col);*/
+
+    printf("\n %s bonne partie :-)\n", p.pseudo);
 
     char **grid = createGrid(line, col);
     showGrid(grid, line, col);
@@ -17,14 +22,18 @@ void twoPlayer()
     {
         do
         {
-            if ((coup < 1 || coup > col) && coup != -43)
-            {
-                printf("Coup invalide");
-            }
+            
+            
 
-            printf("\nJoueur %d entrez votre colonne : ", isPlayer1 ? 1 : 2);
+            printf("\n %s entrez votre colonne : ", isPlayer1 ? p.pseudo : "Adv");
             scanf("%d", &coup);
-        } while (coup < 1 || coup > col);
+            if (coup < 1 || coup > col)
+            {
+                printf("\n Coup invalide\n");
+            } else if(grid[0][coup-1] != ' '){
+                printf("\n Cette colonne est pleine. Jouez ailleurs!\n");
+            }
+        } while (coup < 1 || coup > col || grid[0][coup-1] != ' ');
 
         if (IS_WIN){
             system("cls");
@@ -32,12 +41,12 @@ void twoPlayer()
             system("clear");
         }
 
-        /* Si un joueur a gagne la partie (sinon si la personne n'a gagne), 
+        /* Si un joueur a gagne la partie (sinon si la personne n'a pas gagne), 
         on le declare vainqueur (sinon "Match NULL") et retour au menu */
         showGrid(wherePosition(grid, line, coup, isPlayer1), line, col);
         if (winPosition(grid, line, col, isPlayer1 ? 'X' : 'O'))
         {
-            printf("\nLe joueur %d a gagné !!!!\n", isPlayer1 = isPlayer1 ? 1 : 2);
+            printf("\nLe joueur %s a gagné !!!!\n",  isPlayer1 ? p.pseudo : "Adv");
             break;
         } else if (loseGame(grid, col))
         {

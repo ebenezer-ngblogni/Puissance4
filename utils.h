@@ -2,12 +2,11 @@
 #define UTILS_H_INCLUDED
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
 
 
 #define MIN_COL 7
 #define MIN_LINE 6
+
 
 #ifdef _WIN32
     #define IS_LINUX 0
