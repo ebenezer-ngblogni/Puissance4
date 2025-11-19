@@ -13,12 +13,12 @@ struct profil{
 };
 typedef struct profil Profil;
 
-Profil profil_login_ou_creer();
-int profil_valider_pseudo(char* pseudo);
-Profil profil_charger(char* pseudo);
-void profil_sauvegarder(Profil* p);
-Profil profil_creer_defaut(char* pseudo);
-void profil_modifier_parametres(Profil* p);
-void profil_initialiser_dossier();
+Profil profile_login_or_create();
+int profile_validate_pseudo(char* pseudo);
+Profil profile_load(char* pseudo);
+void profile_save(Profil* p);
+Profil profile_create_default(char* pseudo);
+void profile_modify_settings(Profil* p);
+void profile_initialize_directory();
 
 #endif

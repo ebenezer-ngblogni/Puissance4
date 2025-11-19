@@ -7,7 +7,7 @@ void twoPlayer(Profil p)
 
     int line = p.grille_lignes, col=p.grille_cols;
     int coup , rate = 1, isPlayer1 = 1, continu = 1;
-    
+
     /*printf("Entrez le nombre de lignes : ");
     scanf("%d", &line);
     printf("Entrez le nombre de colonnes : ");
@@ -22,8 +22,8 @@ void twoPlayer(Profil p)
     {
         do
         {
-            
-            
+
+
 
             printf("\n %s entrez votre colonne : ", isPlayer1 ? p.pseudo : "Adv");
             scanf("%d", &coup);
@@ -41,19 +41,23 @@ void twoPlayer(Profil p)
             system("clear");
         }
 
-        /* Si un joueur a gagne la partie (sinon si la personne n'a pas gagne), 
+        /* Si un joueur a gagne la partie (sinon si la personne n'a pas gagne),
         on le declare vainqueur (sinon "Match NULL") et retour au menu */
         showGrid(wherePosition(grid, line, coup, isPlayer1), line, col);
         if (winPosition(grid, line, col, isPlayer1 ? 'X' : 'O'))
         {
             printf("\nLe joueur %s a gagné !!!!\n",  isPlayer1 ? p.pseudo : "Adv");
+            flush_stdin_buffer();
+            utils_pause_to_continue();
             break;
         } else if (loseGame(grid, col))
         {
             printf("\n Match NULL, Aucun gagnant !!! \n");
+            flush_stdin_buffer();
+            utils_pause_to_continue();
             break;
         }
-        
+
         isPlayer1 = isPlayer1 ? 0 : 1;
     }
 
