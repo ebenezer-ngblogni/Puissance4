@@ -1,198 +1,82 @@
 #include "menu.h"
-#include "utils.h"
+#include "profil.h"
+#include "display.h"
 #include "gameplay.h"
 
 
-/* ================================================================== */
-/* FONCTIONS UTILITAIRES (INTERNES)                    */
-/* ================================================================== */
+void application_start() {
 
-/**
- * Helper interne pour nettoyer la console (multi-plateforme).
- */
-void menu_clear_screen() {
-    #ifdef _WIN32
-        system("cls"); // Commande Windows
-    #else
-        system("clear"); // Commande Linux/MacOS
-    #endif
-}
+    // Initialisation
+    profile_initialize_directory();
 
-/**
- * Helper interne pour lire une chaîne de manière sécurisée (remplace fgets)
- * et supprime le caractère '\n' final.
- */
-void menu_lire_chaine_securise(char* buffer, int taille) {
-    if (fgets(buffer, taille, stdin) != NULL) {
-        // Supprime le '\n' capturé par fgets
-        buffer[strcspn(buffer, "\n")] = '\0';
+    Profil profil_actuel;
+    int choix_menu = 0;
+    int programme_actif = 1;
+
+    // Boucle principale du programme
+    while (programme_actif) {
+
+        // Etape 1: Login
+        profil_actuel = profile_login_or_create();
+
+        int utilisateur_connecte = 1;
+
+        // Boucle du menu principal (tant que l'utilisateur est connecté)
+        while (utilisateur_connecte) {
+
+            utils_clear_screen();
+            printf("=== MENU PRINCIPAL ===\n");
+            printf("Utilisateur : %s\n", profil_actuel.pseudo);
+            printf("----------------------\n");
+            printf(" Reglages : %dx%d | %.1fs | Mode: %s\n",
+                   profil_actuel.grille_lignes, profil_actuel.grille_cols,
+                   profil_actuel.temps_par_coup,
+                   (profil_actuel.mode_par_defaut == 1 ? "PvP" : "PvIA"));
+            printf("----------------------\n");
+
+            printf(" 1. Nouvelle Partie\n");
+            printf(" 2. Modifier les Parametres\n");
+            printf(" 3. Consulter l'historique des parties\n");
+            printf(" 4. Reprendre une partie\n");
+            printf(" 5. Changer d'utilisateur\n");
+            printf(" 6. Quitter\n");
+            printf("\nVotre choix : ");
+
+            choix_menu = utils_get_int();
+
+            switch (choix_menu) {
+                case 1:
+                    printf("\n-> Lancement de 'Nouvelle Partie'...\n");
+                    twoPlayer(profil_actuel);
+                    break;
+                case 2:
+                    profile_modify_settings(&profil_actuel);
+                    break;
+                case 3:
+                    printf("\n-> Affichage de 'Historique'...\n(Bientot disponible !)");
+                    utils_pause_to_continue();
+                    break;
+                case 4:
+                    printf("\n-> Chargement de 'Reprendre partie'...\n(Bientot disponible !)");
+                    utils_pause_to_continue();
+                    break;
+                case 5: // Changer d'utilisateur
+                    utilisateur_connecte = 0;
+                    printf("\nDeconnexion...\n");
+                    break;
+                case 6: // Quitter
+                    utilisateur_connecte = 0;
+                    programme_actif = 0;
+                    break;
+                default:
+                    printf("\n-> Choix invalide. Veuillez reessayer.\n");
+                    utils_pause_to_continue();
+                    break;
+            }
+        }
     }
-}
 
-/**
- * Helper interne pour lire un entier de manière robuste.
- * Lit une ligne complète et la convertit.
- */
-int menu_lire_choix_int() {
-    char buffer[100];
-    menu_lire_chaine_securise(buffer, 100);
-    // Convertit la chaîne en entier (base 10)
-    return (int) strtol(buffer, NULL, 10);
-}
-
-/**
- * Helper interne pour lire un float de manière robuste.
- */
-float menu_lire_choix_float() {
-    char buffer[100];
-    menu_lire_chaine_securise(buffer, 100);
-    // Convertit la chaîne en float/double
-    return (float) strtod(buffer, NULL);
-}
-
-/* ================================================================== */
-/* FONCTIONS DE LOGIN / ACCUEIL                       */
-/* ================================================================== */
-
-void menu_afficher_bienvenue() {
-    menu_clear_screen();
-    printf("==============================\n");
-    printf("  BIENVENUE DANS PUISSANCE 4 !\n");
-    printf("==============================\n\n");
-}
-
-void menu_demander_pseudo(char* buffer_pseudo) {
-    printf("Veuillez entrer votre pseudo (lettres, chiffres, _) : ");
-    // Utilise notre helper sécurisé (taille max du pseudo = 50)
-    menu_lire_chaine_securise(buffer_pseudo, 50);
-}
-
-void menu_afficher_erreur_pseudo() {
-    printf("-> Erreur : Pseudo invalide. Le format est incorrect.\n\n");
-}
-
-void menu_afficher_bon_retour(char* pseudo) {
-    printf("-> Bon retour, %s !\n", pseudo);
-}
-
-void menu_afficher_nouveau_profil(char* pseudo) {
-    printf("-> Bienvenue, %s ! Creation de votre profil par defaut...\n", pseudo);
-}
-
-/* ================================================================== */
-/* MENU PRINCIPAL                               */
-/* ================================================================== */
-
-int menu_afficher_principal(Profil* p) {
-    //menu_clear_screen();
-    printf("\n=== MENU PRINCIPAL ===\n");
-    printf("Utilisateur : %s\n", p->pseudo);
-    printf("----------------------\n");
-
-    // Affichage des réglages actuels
-    printf(" Reglages actuels :\n");
-    printf(" > Grille : %dx%d\n", p->grille_lignes, p->grille_cols);
-    printf(" > Pions  : Forme %d\n", p->forme_pions);
-    printf(" > Temps  : %.1f sec/coup\n", p->temps_par_coup);
-    printf(" > Mode   : %s\n", (p->mode_par_defaut == 1 ? "Joueur vs Joueur" : "Joueur vs IA"));
-    printf("----------------------\n");
-
-    // Options du menu
-    printf("Que souhaitez-vous faire ?\n");
-    printf(" 1. Nouvelle Partie\n");
-    printf(" 2. Modifier les Parametres\n");
-    printf(" 3. Consulter l'historique des parties\n");
-    printf(" 4. Reprendre une partie\n");
-    printf(" 5. Changer d'utilisateur\n");
-    printf(" 6. Quitter\n");
-    printf("\nVotre choix : ");
-
-    return menu_lire_choix_int();
-}
-
-void menu_afficher_au_revoir(void) {
+    // Fin du programme
+    utils_clear_screen();
     printf("\nMerci d'avoir joue ! A bientot.\n");
-}
-
-/* ================================================================== */
-/* SOUS-MENU PARAMETRES                           */
-/* ================================================================== */
-
-int menu_afficher_menu_parametres(Profil* p) {
-    menu_clear_screen();
-    printf("\n=== PARAMETRES (Profil: %s) ===\n", p->pseudo);
-    printf(" 1. Modifier la Grille (Actuel: %dx%d)\n", p->grille_lignes, p->grille_cols);
-    printf(" 2. Modifier le Temps/coup (Actuel: %.1fs)\n", p->temps_par_coup);
-    printf(" 3. Modifier la Forme des Pions (Actuel: %d)\n", p->forme_pions);
-    printf(" 4. Modifier le Mode par defaut (Actuel: %s)\n", (p->mode_par_defaut == 1 ? "PvP" : "PvIA"));
-    printf(" 5. Retour au menu principal\n");
-    printf("\nVotre choix : ");
-
-    return menu_lire_choix_int();
-}
-
-void menu_demander_nouvelle_grille(int* lignes, int* cols) {
-    printf("\n--- Modification Grille (Min 6x7, Max 20x20) ---\n");
-
-    do {
-        printf("Nouvelle hauteur (lignes) : ");
-        *lignes = menu_lire_choix_int();
-    } while (*lignes < MIN_LINE || *lignes > 20);
-
-    do {
-        printf("Nouvelle largeur (colonnes) : ");
-        *cols = menu_lire_choix_int();
-    } while (*cols < MIN_COL || *cols > 20);
-}
-
-float menu_demander_nouveau_tp() {
-    float tp = 0;
-    printf("\n--- Modification Temps (Min 5s, Max 60s) ---\n");
-
-    do {
-        printf("Nouveau temps par coup (en secondes) : ");
-        tp = menu_lire_choix_float();
-    } while (tp < 5.0 || tp > 60.0);
-
-    return tp;
-}
-
-int menu_demander_nouvelle_forme() {
-    int forme = 0;
-    printf("\n--- Modification Pions ---\n");
-    printf(" 1. Forme (X / O)\n");
-    printf(" 2. Forme (A / B)\n");
-    printf(" 3. Forme (R / B) (Couleurs)\n");
-
-    do {
-        printf("Votre choix (1, 2 ou 3) : ");
-        forme = menu_lire_choix_int();
-    } while (forme < 1 || forme > 3);
-
-    return forme;
-}
-
-int menu_demander_nouveau_mode_defaut() {
-    int mode = 0;
-    printf("\n--- Modification Mode par defaut ---\n");
-
-    do {
-        printf(" 1. Joueur vs Joueur (PvP)\n");
-        printf(" 2. Joueur vs IA (PvIA)\n");
-        printf("Votre choix (1 ou 2) : ");
-        mode = menu_lire_choix_int();
-    } while (mode < 1 || mode > 2);
-
-    return mode;
-}
-
-/* ================================================================== */
-/* MESSAGES D'ERREUR                            */
-/* ================================================================== */
-
-void menu_afficher_erreur_choix_invalide() {
-    printf("\n-> Choix invalide. Veuillez reessayer.\n");
-    printf("Appuyez sur Entree pour continuer...");
-    char temp[2]; // Buffer temporaire juste pour attendre une entrée
-    menu_lire_chaine_securise(temp, 2);
 }

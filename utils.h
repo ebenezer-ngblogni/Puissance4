@@ -21,5 +21,25 @@
 
 enum niveau {FACILE, MOYEN, DIFFICILE};
 
+
+// Efface l'écran (multi-plateforme)
+void utils_clear_screen();
+
+// Lit une chaine de manière robuste
+void utils_get_secure_string(char* buffer, int taille);
+
+// Vider le tampon stdin
+void flush_stdin_buffer();
+
+// Lit un entier de manière robuste
+int utils_get_int();
+
+// Lit un float de manière robuste
+float utils_get_float();
+
+// Met le programme en pause jusqu'à ce que l'utilisateur appuie sur Entrée
+void utils_pause_to_continue();
+
+
 #endif // UTILS_H_INCLUDED
 #endif // UTILS_H_INCLUDED

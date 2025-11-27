@@ -4,7 +4,9 @@
     "file.h": "c",
     "utils.h": "c",
     "text_encoding": "c",
-    "typeinfo": "c"
+    "typeinfo": "c",
+    "gameplay.h": "c",
+    "display.h": "c"
   },
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",

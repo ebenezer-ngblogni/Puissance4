@@ -1,26 +1,17 @@
-#include "utils.h"
 #include "profil.h"
-#include "menu.h"
 
-#ifdef _WIN32
-    #include <direct.h> // Pour _mkdir (Windows)
-#else
-    #include <sys/stat.h> // Pour mkdir (Linux/macOS)
-    #include <sys/types.h> // Nécessaire pour stat.h
-#endif
-
-
-void profil_initialiser_dossier() {
+void profile_initialize_directory(void) {
     #ifdef _WIN32
         // Syntaxe Windows
-        _mkdir("files");
+        system("mkdir files > NUL 2>&1");
     #else
         // Syntaxe Linux/macOS
-        mkdir("files", 0777);
+        // L'option '-p' signifie "ne pas échouer si existe déjà"
+        system("mkdir -p files");
     #endif
 }
 
-int profil_valider_pseudo(char* pseudo) {
+int profile_validate_pseudo(char* pseudo) {
 
     if (pseudo == NULL || strlen(pseudo) == 0) {
         return 0;
@@ -39,7 +30,7 @@ int profil_valider_pseudo(char* pseudo) {
 }
 
 
-void profil_sauvegarder(Profil * p) {
+void profile_save(Profil * p) {
     char nom_fichier[256];
 
     sprintf(nom_fichier, "files/%s.config.txt", p->pseudo);
@@ -63,7 +54,7 @@ void profil_sauvegarder(Profil * p) {
 }
 
 
-Profil profil_charger(char* pseudo) {
+Profil profile_load(char* pseudo) {
     Profil p;
 
     p.pseudo[0] = '\0';
@@ -98,7 +89,7 @@ Profil profil_charger(char* pseudo) {
 }
 
 
-Profil profil_creer_defaut(char* pseudo) {
+Profil profile_create_default(char* pseudo) {
 
     Profil p;
 
@@ -110,124 +101,103 @@ Profil profil_creer_defaut(char* pseudo) {
     p.forme_pions = 1;
     p.mode_par_defaut = 1;
 
-    profil_sauvegarder(&p);
+    profile_save(&p);
 
     return p;
 }
 
 
-void profil_modifier_parametres(Profil* p) {
-
-    // Si le pointeur de profil est invalide, on ne peut rien faire.
-    if (p == NULL) {
-        return;
-    }
-
-    int choix_menu_params = 0;
-
-    // Boucle 'do-while' pour afficher le menu des paramètres
-    // tant que l'utilisateur ne choisit pas "Retour" (ex: option 4)
-    do {
-        // 1. On appelle une fonction de menu.c qui AFFICHE les options
-        //    et renvoie le choix de l'utilisateur.
-        choix_menu_params = menu_afficher_menu_parametres(p);
-
-        switch (choix_menu_params) {
-
-            case 1: // Modifier la Grille
-                { // On ouvre un bloc pour déclarer des variables temporaires
-                    int nouvelles_lignes, nouvelles_cols;
-
-                    // On appelle la fonction de menu.c qui gère la saisie
-                    menu_demander_nouvelle_grille(&nouvelles_lignes, &nouvelles_cols);
-
-                    // On met à jour le profil
-                    p->grille_lignes = nouvelles_lignes;
-                    p->grille_cols = nouvelles_cols;
-
-                    // On sauvegarde immédiatement
-                    profil_sauvegarder(p);
-                    printf("-> Taille de la grille mise a jour.\n");
-                }
-                break;
-
-            case 2: // Modifier le Temps par coup (tp)
-                // La fonction de menu.c renvoie directement la nouvelle valeur
-                p->temps_par_coup = menu_demander_nouveau_tp();
-
-                profil_sauvegarder(p);
-                printf("-> Temps par coup mis a jour.\n");
-                break;
-
-            case 3: // Modifier la Forme des pions
-                // La fonction de menu.c renvoie le nouvel identifiant (1, 2 ou 3)
-                p->forme_pions = menu_demander_nouvelle_forme();
-
-                profil_sauvegarder(p);
-                printf("-> Forme des pions mise a jour.\n");
-                break;
-
-            case 4:
-                p->mode_par_defaut = menu_demander_nouveau_mode_defaut();
-                profil_sauvegarder(p);
-                printf("-> Mode par defaut mis a jour.\n");
-                break;
-
-            case 5:
-                printf("-> Retour au menu principal.\n");
-                break;
-
-            default:
-                menu_afficher_erreur_choix_invalide();
-                break;
-        }
-
-    } while (choix_menu_params != 5);
-}
-
-
-Profil profil_login_ou_creer() {
-
+Profil profile_login_or_create() {
     Profil profil_actif;
-    char pseudo_saisi[50]; // Un buffer pour stocker la saisie
-    char buffer_pause[10];
+    char pseudo_saisi[50];
 
-    // 1. Afficher le message d'accueil
-    menu_afficher_bienvenue();
+    utils_clear_screen();
+    printf("==============================\n");
+    printf("  BIENVENUE DANS PUISSANCE 4 !\n");
+    printf("==============================\n\n");
 
-    // 2. Boucler jusqu'à ce qu'on obtienne un profil valide
     while (1) {
+        printf("Veuillez entrer votre pseudo (lettres, chiffres, _) : ");
+        utils_get_secure_string(pseudo_saisi, 50);
 
-        // 3. Demander le pseudo à l'utilisateur
-        menu_demander_pseudo(pseudo_saisi);
-
-        // 4. Valider le format du pseudo
-        if (profil_valider_pseudo(pseudo_saisi) == 0) {
-            menu_afficher_erreur_pseudo();
+        if (profile_validate_pseudo(pseudo_saisi) == 0) {
+            printf("-> Erreur : Pseudo invalide. Le format est incorrect.\n\n");
             continue;
         }
 
-        // 5. Le format est bon, on tente de charger le fichier
-        profil_actif = profil_charger(pseudo_saisi);
+        profil_actif = profile_load(pseudo_saisi);
 
-        // 6. Vérifier si le chargement a réussi
         if (profil_actif.pseudo[0] != '\0') {
-            // SUCCÈS : Le profil existait
-            menu_afficher_bon_retour(profil_actif.pseudo);
-            printf("\nAppuyez sur Entree pour continuer...");
-            menu_lire_chaine_securise(buffer_pause, 10);
-            break;
-
+            printf("-> Bon retour, %s !\n", profil_actif.pseudo);
         } else {
-            // ÉCHEC : Le profil n'existe pas, c'est un nouveau joueur
-            menu_afficher_nouveau_profil(pseudo_saisi);
-            profil_actif = profil_creer_defaut(pseudo_saisi);
-            printf("\nAppuyez sur Entree pour continuer...");
-            menu_lire_chaine_securise(buffer_pause, 10);
-            break;
+            printf("-> Bienvenue, %s ! Creation de votre profil par defaut...\n", pseudo_saisi);
+            profil_actif = profile_create_default(pseudo_saisi);
         }
-    }
 
+        utils_pause_to_continue();
+        break;
+    }
     return profil_actif;
 }
 
+void profile_modify_settings(Profil* p) {
+    int choix = 0;
+    do {
+        utils_clear_screen();
+        printf("=== PARAMETRES (Profil: %s) ===\n", p->pseudo);
+        printf(" 1. Modifier la Grille (Actuel: %dx%d)\n", p->grille_lignes, p->grille_cols);
+        printf(" 2. Modifier le Temps/coup (Actuel: %.1fs)\n", p->temps_par_coup);
+        printf(" 3. Modifier la Forme des Pions (Actuel: %d)\n", p->forme_pions);
+        printf(" 4. Modifier le Mode par defaut (Actuel: %s)\n", (p->mode_par_defaut == 1 ? "PvP" : "PvIA"));
+        printf(" 5. Retour au menu principal\n");
+        printf("\nVotre choix : ");
+
+        choix = utils_get_int();
+
+        switch (choix) {
+            case 1: // Grille
+                printf("\n--- Modification Grille (Min 4x4, Max 20x20) ---\n");
+                do {
+                    printf("Nouvelle hauteur (lignes) : ");
+                    p->grille_lignes = utils_get_int();
+                } while (p->grille_lignes < 4 || p->grille_lignes > 20);
+                do {
+                    printf("Nouvelle largeur (colonnes) : ");
+                    p->grille_cols = utils_get_int();
+                } while (p->grille_cols < 4 || p->grille_cols > 20);
+                profile_save(p);
+                break;
+            case 2: // Temps
+                printf("\n--- Modification Temps (Min 5s, Max 60s) ---\n");
+                do {
+                    printf("Nouveau temps par coup (en secondes) : ");
+                    p->temps_par_coup = utils_get_float();
+                } while (p->temps_par_coup < 5.0 || p->temps_par_coup > 60.0);
+                profile_save(p);
+                break;
+            case 3: // Forme
+                printf("\n--- Modification Pions (1, 2 ou 3) ---\n");
+                do {
+                    printf("Votre choix (1, 2 ou 3) : ");
+                    p->forme_pions = utils_get_int();
+                } while (p->forme_pions < 1 || p->forme_pions > 3);
+                profile_save(p);
+                break;
+            case 4: // Mode
+                printf("\n--- Modification Mode (1=PvP, 2=PvIA) ---\n");
+                do {
+                    printf("Votre choix (1 ou 2) : ");
+                    p->mode_par_defaut = utils_get_int();
+                } while (p->mode_par_defaut < 1 || p->mode_par_defaut > 2);
+                profile_save(p);
+                break;
+            case 5: // Retour
+                printf("-> Retour au menu principal.\n");
+                break;
+            default:
+                printf("\n-> Choix invalide. Veuillez reessayer.\n");
+                utils_pause_to_continue();
+                break;
+        }
+    } while (choix != 5);
+}
