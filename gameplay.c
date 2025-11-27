@@ -1,12 +1,13 @@
 #include "gameplay.h"
 #include "display.h"
 #include "profil.h"
+#include "utils.h"
 
 void twoPlayer(Profil p)
 {
 
-    int line = p.grille_lignes, col=p.grille_cols;
-    int coup , rate = 1, isPlayer1 = 1, continu = 1;
+    int line = p.grille_lignes, col = p.grille_cols;
+    int coup, rate = 1, isPlayer1 = 1, continu = 1;
 
 
     printf("\n %s bonne partie : \n", p.pseudo);
@@ -19,26 +20,31 @@ void twoPlayer(Profil p)
         do
         {
 
-
-
             printf("\n %s entrez votre colonne : ", isPlayer1 ? p.pseudo : "Adv");
             scanf("%d", &coup);
             if (coup < 1 || coup > col)
             {
                 printf("\n Coup invalide\n");
-            } else if(grid[0][coup-1] != ' '){
+            }
+            else if (grid[0][coup - 1] != ' ')
+            {
                 printf("\n Cette colonne est pleine. Jouez ailleurs!\n");
             }
-        } while (coup < 1 || coup > col || grid[0][coup-1] != ' ');
+        } while (coup < 1 || coup > col || grid[0][coup - 1] != ' ');
 
-        if (IS_WIN){
+        if (IS_WIN)
+        {
             system("cls");
-        }else{
+        }
+        else
+        {
             system("clear");
         }
 
         /* Si un joueur a gagne la partie (sinon si la personne n'a pas gagne),
+        Si un joueur a gagne la partie (sinon si la personne n'a pas gagne),
         on le declare vainqueur (sinon "Match NULL") et retour au menu */
+
         showGrid(wherePosition(grid, line, coup, isPlayer1), line, col);
         if (winPosition(grid, line, col, isPlayer1 ? 'X' : 'O'))
         {
@@ -46,7 +52,8 @@ void twoPlayer(Profil p)
             flush_stdin_buffer();
             utils_pause_to_continue();
             break;
-        } else if (drawGame(grid, col))
+        }
+        else if (drawGame(grid, col))
         {
             printf("\n Match NULL, Aucun gagnant !!! \n");
             flush_stdin_buffer();
@@ -60,14 +67,14 @@ void twoPlayer(Profil p)
     freeGrid(grid, line);
 }
 
-int drawGame(char **grid , int col){
+int loseGame(char **grid , int col){
     int cp=0;
     for(int j = 0; j < col; j++){
         if(grid[0][j]!=' ')
             cp += 1;
     }
 
-    if(cp == col)
+    if (cp == col)
         return 1;
     return 0;
 }

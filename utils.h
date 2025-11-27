@@ -19,7 +19,9 @@
     #define IS_LINUX 1
     #define IS_WIN 0
     #define IS_MAC 0
+#endif // UTILS_H_INCLUDED
 
+enum niveau {FACILE, MOYEN, DIFFICILE};
 
 // Efface l'écran (multi-plateforme)
 void utils_clear_screen();
@@ -39,6 +41,4 @@ float utils_get_float();
 // Met le programme en pause jusqu'à ce que l'utilisateur appuie sur Entrée
 void utils_pause_to_continue();
 
-
-#endif // UTILS_H_INCLUDED
 #endif // UTILS_H_INCLUDED

@@ -1,8 +1,26 @@
-/obj
-Puissance4.cbp
-Puissance4.depend
-Puissance4.layout
-game.exe
+# Dossiers de compilation
+bin/
+obj/
+build/
+
+# Exécutables
+*.exe
+*.out
 puissance4
+
+# Fichiers Code Blocks 
+*.depend
+*.layout
+
+# Fichiers de sauvegarde
+*~
+*.bak
+*.swp
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers de données
 /files
 play
