@@ -23,8 +23,6 @@ void twoPlayer(Profil p)
     {
         do
         {
-            
-            
 
             printf("\n %s entrez votre colonne : ", isPlayer1 ? p.pseudo : "Adv");
             scanf("%d", &coup);
@@ -48,8 +46,9 @@ void twoPlayer(Profil p)
         }
 
         /* Si un joueur a gagne la partie (sinon si la personne n'a pas gagne),
-        /* Si un joueur a gagne la partie (sinon si la personne n'a pas gagne),
+        Si un joueur a gagne la partie (sinon si la personne n'a pas gagne),
         on le declare vainqueur (sinon "Match NULL") et retour au menu */
+
         showGrid(wherePosition(grid, line, coup, isPlayer1), line, col);
         if (winPosition(grid, line, col, isPlayer1 ? 'X' : 'O'))
         {
@@ -72,7 +71,7 @@ void twoPlayer(Profil p)
     freeGrid(grid, line);
 }
 
-void playerVsIa(Profil p, niveau lvl)
+/*void playerVsIa(Profil p, niveau lvl)
 {
 
     int line = p.grille_lignes, col = p.grille_cols;
@@ -134,13 +133,13 @@ void playerVsIa(Profil p, niveau lvl)
                 break;
 
             case MOYEN :
-                /* code */
-                break;
+                *//* code */
+                /*break;
 
             case DIFFICILE :
-                
+
                 break;
-            
+
             default:
                 break;
             }
@@ -148,7 +147,7 @@ void playerVsIa(Profil p, niveau lvl)
     }
 
     freeGrid(grid, line);
-}
+}*/
 
 int drawGame(char **grid, int col)
 {

@@ -13,7 +13,10 @@ void freeGrid(char **grid, int line);
 //fonction de calcul de position
 char **wherePosition(char **grid, int line, int coup, int isPlayer1);
 
+void showPlayer1piece();
+void showPlayer2piece();
+
 #endif // DISPLAY_H_INCLUDED
-#ifdef _WIN32 
+#ifdef _WIN32
 #include <windows.h>
 #endif

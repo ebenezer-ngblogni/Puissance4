@@ -23,6 +23,6 @@ void twoPlayer(Profil p);
 
 int winPosition(char **grid ,int line, int col, char symbole);
 
-int loseGame(char **grid , int col);
+int drawGame(char **grid , int col);
 
 #endif // GAMEPLAY_H_INCLUDED

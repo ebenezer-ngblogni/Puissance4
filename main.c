@@ -1,8 +1,11 @@
 #include "menu.h"
+#include "utils.h"
+
+
 
 int main()
 {
-        if(IS_WIN){
+    if(IS_WIN){
         system("chcp 65001");
         //showPlayer2piece();
     }
