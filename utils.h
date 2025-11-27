@@ -19,5 +19,7 @@
     #define IS_WIN 0
     #define IS_MAC 0
 
+enum niveau {FACILE, MOYEN, DIFFICILE};
+
 #endif // UTILS_H_INCLUDED
 #endif // UTILS_H_INCLUDED

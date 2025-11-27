@@ -8,7 +8,7 @@ build/
 *.out
 puissance4
 
-# Fichiers Code::Blocks personnels (à ignorer)
+# Fichiers Code Blocks 
 *.depend
 *.layout
 
@@ -21,5 +21,5 @@ puissance4
 .DS_Store
 Thumbs.db
 
-# Fichiers de données (si nécessaire)
+# Fichiers de données
 /files
