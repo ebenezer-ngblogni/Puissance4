@@ -8,12 +8,8 @@ void twoPlayer(Profil p)
     int line = p.grille_lignes, col=p.grille_cols;
     int coup , rate = 1, isPlayer1 = 1, continu = 1;
 
-    /*printf("Entrez le nombre de lignes : ");
-    scanf("%d", &line);
-    printf("Entrez le nombre de colonnes : ");
-    scanf("%d", &col);*/
 
-    printf("\n %s bonne partie :-)\n", p.pseudo);
+    printf("\n %s bonne partie : \n", p.pseudo);
 
     char **grid = createGrid(line, col);
     showGrid(grid, line, col);
@@ -50,7 +46,7 @@ void twoPlayer(Profil p)
             flush_stdin_buffer();
             utils_pause_to_continue();
             break;
-        } else if (loseGame(grid, col))
+        } else if (drawGame(grid, col))
         {
             printf("\n Match NULL, Aucun gagnant !!! \n");
             flush_stdin_buffer();
@@ -64,7 +60,7 @@ void twoPlayer(Profil p)
     freeGrid(grid, line);
 }
 
-int loseGame(char **grid , int col){
+int drawGame(char **grid , int col){
     int cp=0;
     for(int j = 0; j < col; j++){
         if(grid[0][j]!=' ')
@@ -78,12 +74,10 @@ int loseGame(char **grid , int col){
 
 int winPosition(char **grid, int line, int col, char symbole)
 {
-
     for (int i = 0; i < line; i++)
     {
         for (int j = 0; j < col; j++)
         {
-
             if (grid[i][j] != symbole)
                 continue;
 
