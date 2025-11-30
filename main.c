@@ -1,8 +1,6 @@
 #include "menu.h"
 #include "utils.h"
 
-
-
 int main()
 {
     if(IS_WIN){

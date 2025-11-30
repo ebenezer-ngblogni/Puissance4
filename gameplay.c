@@ -79,10 +79,90 @@ void twoPlayer(Profil p)
     freeGrid(grid, line);
 }
 
-int loseGame(char **grid , int col){
-    int cp=0;
-    for(int j = 0; j < col; j++){
-        if(grid[0][j]!=' ')
+/*void playerVsIa(Profil p, NIVEAU lvl)
+{
+
+    int line = p.grille_lignes, col = p.grille_cols;
+    int coup, rate = 1, isPlayer = 1, continu = 1;
+
+    printf("\n %s bonne partie :-)\n", p.pseudo);
+
+    char **grid = createGrid(line, col);
+    showGrid(grid, line, col);
+
+    while (continu)
+    {
+        if (isPlayer)
+        {
+
+            do
+            {
+                printf("\n %s entrez votre colonne : ", p.pseudo);
+                scanf("%d", &coup);
+                if (coup < 1 || coup > col)
+                {
+                    printf("\n Coup invalide\n");
+                }
+                else if (grid[0][coup - 1] != ' ')
+                {
+                    printf("\n Cette colonne est pleine. Jouez ailleurs!\n");
+                }
+            } while (coup < 1 || coup > col || grid[0][coup - 1] != ' ');
+
+            if (IS_WIN)
+            {
+                system("cls");
+            }
+            else
+            {
+                system("clear");
+            }
+
+            showGrid(wherePosition(grid, line, coup, isPlayer), line, col);
+
+            if (winPosition(grid, line, col, isPlayer ? 'X' : 'O'))
+            {
+                printf("\nLe joueur %s a gagné !!!!\n", isPlayer ? p.pseudo : "Adv");
+                isPlayer ? printf("\nLe joueur %s a gagné !!!!\n", p.pseudo) : printf("\nVous avez perdu !\n");
+                break;
+            }
+            else if (drawGame(grid, col))
+            {
+                printf("\n Match NULL, Aucun gagnant !!! \n");
+                break;
+            }
+
+            isPlayer = isPlayer ? 0 : 1;
+        }else{
+            switch (lvl)
+            {
+            case FACILE :
+                IAFacile();
+                break;
+
+            case MOYEN :
+
+                break;
+
+            case DIFFICILE :
+
+                break;
+
+            default:
+                break;
+            }
+        }
+    }
+
+    freeGrid(grid, line);
+}*/
+
+int drawGame(char **grid, int col)
+{
+    int cp = 0;
+    for (int j = 0; j < col; j++)
+    {
+        if (grid[0][j] != ' ')
             cp += 1;
     }
 
@@ -119,7 +199,3 @@ int winPosition(char **grid, int line, int col, char symbole)
     }
     return 0;
 }
-
-void showPlayer1piece();
-
-void showPlayer2piece();

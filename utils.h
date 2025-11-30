@@ -4,7 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#ifndef _WIN32
 #include <time.h>
+#endif
 
 #define MIN_COL 7
 #define MIN_LINE 6
@@ -21,7 +23,7 @@
     #define IS_MAC 0
 #endif // UTILS_H_INCLUDED
 
-enum niveau {FACILE, MOYEN, DIFFICILE};
+typedef enum niveau {FACILE, MOYEN, DIFFICILE} NIVEAU;
 
 // Efface l'écran (multi-plateforme)
 void utils_clear_screen();
