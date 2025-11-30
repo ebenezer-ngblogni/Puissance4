@@ -17,7 +17,7 @@ struct game
     // int grille [sizes.height][sizes.width]
 };
 
-
+long timer();
 void twoPlayer(Profil p);
 
 

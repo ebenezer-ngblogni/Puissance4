@@ -47,10 +47,10 @@
 		</Unit>
 		<Unit filename="gameplay.c">
 			<Option compilerVar="CC" />
-			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="gameplay.h">
-			<Option target="&lt;{~None~}&gt;" />
+			<Option compile="1" />
+			<Option link="1" />
 		</Unit>
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />

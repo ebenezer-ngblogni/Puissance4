@@ -4,11 +4,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <unistd.h>
-
+#include <time.h>
 
 #define MIN_COL 7
 #define MIN_LINE 6
+#define TIMER_PLAY 15
 
 
 #ifdef _WIN32

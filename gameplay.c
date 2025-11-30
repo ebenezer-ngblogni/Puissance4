@@ -3,11 +3,23 @@
 #include "profil.h"
 #include "utils.h"
 
+// Fonction permettant de compter de nombre de seconde de chaque partie
+long timer(){
+    time_t debut = time(NULL);
+    while(1){
+        time_t maintenant = time(NULL);
+        time_t seconde = debut - maintenant;
+
+        if(seconde > TIMER_PLAY)
+            return seconde;
+    }
+}
+
 void twoPlayer(Profil p)
 {
 
     int line = p.grille_lignes, col = p.grille_cols;
-    int coup, rate = 1, isPlayer1 = 1, continu = 1;
+    int coup, isPlayer1 = 1, continu = 1;
 
 
     printf("\n %s bonne partie : \n", p.pseudo);
