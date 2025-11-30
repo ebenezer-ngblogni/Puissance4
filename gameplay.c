@@ -71,7 +71,7 @@ void twoPlayer(Profil p)
     freeGrid(grid, line);
 }
 
-/*void playerVsIa(Profil p, niveau lvl)
+/*void playerVsIa(Profil p, NIVEAU lvl)
 {
 
     int line = p.grille_lignes, col = p.grille_cols;
@@ -133,8 +133,8 @@ void twoPlayer(Profil p)
                 break;
 
             case MOYEN :
-                *//* code */
-                /*break;
+
+                break;
 
             case DIFFICILE :
 
@@ -193,7 +193,3 @@ int winPosition(char **grid, int line, int col, char symbole)
     }
     return 0;
 }
-
-void showPlayer1piece();
-
-void showPlayer2piece();

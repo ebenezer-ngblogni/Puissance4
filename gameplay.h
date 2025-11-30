@@ -25,4 +25,6 @@ int winPosition(char **grid ,int line, int col, char symbole);
 
 int drawGame(char **grid , int col);
 
+void playerVsIa(Profil p, NIVEAU lvl);
+
 #endif // GAMEPLAY_H_INCLUDED
