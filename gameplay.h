@@ -3,6 +3,8 @@
 #include "utils.h"
 #include "profil.h"
 
+int waitToPlay(int *coup, int delay);
+
 typedef struct size
 {
     int width;
@@ -17,7 +19,7 @@ struct game
     // int grille [sizes.height][sizes.width]
 };
 
-
+long timer();
 void twoPlayer(Profil p);
 
 

@@ -97,7 +97,7 @@ Profil profile_create_default(char* pseudo) {
 
     p.grille_cols = MIN_COL;
     p.grille_lignes = MIN_LINE;
-    p.temps_par_coup = 30.0;
+    p.temps_par_coup = TIMER_PLAY;
     p.forme_pions = 1;
     p.mode_par_defaut = 1;
 

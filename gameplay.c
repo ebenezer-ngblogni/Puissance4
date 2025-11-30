@@ -3,18 +3,59 @@
 #include "profil.h"
 #include "utils.h"
 
+#ifdef _WIN32
+#include <conio.h>
+/* Fonction Booleenne permettant de lire la valeur entree au clavier et 
+la mettre dans la variable "coup" uniquement dans un delai bref defini par la constante "TIMER_PLAY"*/ 
+int waitToPlay(int *coup, int delay){
+    time_t debut = time(NULL);
+    while (time(NULL) - debut < delay) {
+        // verifie si une touche du clavier est appuyee, lie la valeur et la met dans "coup"
+        if (_kbhit()) {
+            scanf("%d", coup);
+            return 1;
+        }
+        Sleep(5);
+    }
+    return 0;
+}
+#endif
+
+#ifndef _WIN32
+#include <sys/select.h>
+#include <unistd.h>
+
+int waitToPlay(int *coup, int delay) {
+    fd_set ensemble;
+    struct timeval temps;
+    FD_ZERO(&ensemble);
+    FD_SET(STDIN_FILENO, &ensemble);
+    temps.tv_sec = delay;
+    temps.tv_usec = 0;
+
+    int ret = select(STDIN_FILENO + 1, &ensemble, NULL, NULL, &temps);
+
+    if (ret > 0) {
+        scanf("%d", coup);
+        return 1;
+    }
+    Sleep(5);
+    return 0;
+}
+#endif
+
 void twoPlayer(Profil p)
 {
 
     int line = p.grille_lignes, col = p.grille_cols;
-    int coup, rate = 1, isPlayer1 = 1, continu = 1;
+    int coup=0, valide = 0, isPlayer1 = 1, continu = 1;
+    long lenght = 0;
+    char pseudo_adv[50];
 
-    /*printf("Entrez le nombre de lignes : ");
-    scanf("%d", &line);
-    printf("Entrez le nombre de colonnes : ");
-    scanf("%d", &col);*/
 
     printf("\n %s bonne partie :-)\n", p.pseudo);
+    printf("\n Entrer le pseudo de votre adversaire:\n");
+    utils_get_secure_string(pseudo_adv, 50);
 
     char **grid = createGrid(line, col);
     showGrid(grid, line, col);
@@ -23,18 +64,29 @@ void twoPlayer(Profil p)
     {
         do
         {
+            printf("\n %s entrez votre colonne(vous avez %d secondes): ", isPlayer1 ? p.pseudo : pseudo_adv, TIMER_PLAY);
+            fflush(stdout);
+           coup=-1;
+           // Si le joueur ne joue pas dans le temps imparti, son tour est passe
+            if (!waitToPlay(&coup, TIMER_PLAY)) {
+                printf("\nTemps écoulé ! Tour passé à l’adversaire.\n");
+                isPlayer1 = isPlayer1 ? 0 : 1;
 
-            printf("\n %s entrez votre colonne : ", isPlayer1 ? p.pseudo : "Adv");
-            scanf("%d", &coup);
-            if (coup < 1 || coup > col)
-            {
+            }
+            // Validation du coup
+            if (coup < 1 || coup > col){
                 printf("\n Coup invalide\n");
+                isPlayer1 = isPlayer1 ? 0 : 1;
+                
             }
-            else if (grid[0][coup - 1] != ' ')
-            {
+            // Si la colonne est pleine
+            else if (grid[0][coup - 1] != ' '){
                 printf("\n Cette colonne est pleine. Jouez ailleurs!\n");
+                isPlayer1 = isPlayer1 ? 0 : 1;
+            } else{
+                valide = 1;
             }
-        } while (coup < 1 || coup > col || grid[0][coup - 1] != ' ');
+        } while (!valide);
 
         if (IS_WIN)
         {
@@ -52,7 +104,7 @@ void twoPlayer(Profil p)
         showGrid(wherePosition(grid, line, coup, isPlayer1), line, col);
         if (winPosition(grid, line, col, isPlayer1 ? 'X' : 'O'))
         {
-            printf("\nLe joueur %s a gagné !!!!\n",  isPlayer1 ? p.pseudo : "Adv");
+            printf("\nLe joueur %s a gagné !!!!\n",  isPlayer1 ? p.pseudo : pseudo_adv);
             flush_stdin_buffer();
             utils_pause_to_continue();
             break;
@@ -67,7 +119,6 @@ void twoPlayer(Profil p)
 
         isPlayer1 = isPlayer1 ? 0 : 1;
     }
-
     freeGrid(grid, line);
 }
 
@@ -114,7 +165,7 @@ void twoPlayer(Profil p)
 
             if (winPosition(grid, line, col, isPlayer ? 'X' : 'O'))
             {
-                printf("\nLe joueur %s a gagné !!!!\n", isPlayer ? p.pseudo : "Adv");
+                printf("\nLe joueur %s a gagné !!!!\n", isPlayer ? p.pseudo : pseudo_adv);
                 isPlayer ? printf("\nLe joueur %s a gagné !!!!\n", p.pseudo) : printf("\nVous avez perdu !\n");
                 break;
             }
