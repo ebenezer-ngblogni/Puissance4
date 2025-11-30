@@ -52,7 +52,7 @@ void twoPlayer(Profil p)
         showGrid(wherePosition(grid, line, coup, isPlayer1), line, col);
         if (winPosition(grid, line, col, isPlayer1 ? 'X' : 'O'))
         {
-            printf("\nLe joueur %s a gagné !!!!\n",  isPlayer1 ? p.pseudo : "Adv");
+            printf("\nLe joueur %s a gagné !!!!\n", isPlayer1 ? p.pseudo : "Adv");
             flush_stdin_buffer();
             utils_pause_to_continue();
             break;
@@ -71,7 +71,7 @@ void twoPlayer(Profil p)
     freeGrid(grid, line);
 }
 
-/*void playerVsIa(Profil p, NIVEAU lvl)
+void playerVsIa(Profil p, NIVEAU lvl)
 {
 
     int line = p.grille_lignes, col = p.grille_cols;
@@ -114,40 +114,159 @@ void twoPlayer(Profil p)
 
             if (winPosition(grid, line, col, isPlayer ? 'X' : 'O'))
             {
-                printf("\nLe joueur %s a gagné !!!!\n", isPlayer ? p.pseudo : "Adv");
-                isPlayer ? printf("\nLe joueur %s a gagné !!!!\n", p.pseudo) : printf("\nVous avez perdu !\n");
+                printf("\nVous avez gagné !!!!\n");
+                utils_pause_to_continue();
+                flush_stdin_buffer();
                 break;
             }
             else if (drawGame(grid, col))
             {
                 printf("\n Match NULL, Aucun gagnant !!! \n");
+                utils_pause_to_continue();
+                flush_stdin_buffer();
                 break;
             }
 
             isPlayer = isPlayer ? 0 : 1;
-        }else{
+        }
+        else
+        {
             switch (lvl)
             {
-            case FACILE :
-                IAFacile();
+            case FACILE:
+                IAEasy(p, grid);
                 break;
 
-            case MOYEN :
-
+            case MOYEN:
+                IAMedium(p, grid);
                 break;
 
-            case DIFFICILE :
-
+            case DIFFICILE:
+                //IAHard(p, grid);
                 break;
 
             default:
                 break;
             }
+
+            if (winPosition(grid, line, col, 'O'))
+            {
+                printf("\nVous avez perdu !\n");
+                utils_pause_to_continue();
+                flush_stdin_buffer();
+                break;
+            }
+            else if (drawGame(grid, col))
+            {
+                printf("\n Match NULL, Aucun gagnant !!! \n");
+                utils_pause_to_continue();
+                flush_stdin_buffer();
+                break;
+            }
+            isPlayer = isPlayer ? 0 : 1;
         }
     }
 
     freeGrid(grid, line);
-}*/
+}
+
+void IAEasy(Profil p, char **grid)
+{
+    int line = p.grille_lignes, col = p.grille_cols, coup;
+    struct timespec t = {1, 500}; // 1 sec et 500 nanosecondes
+    
+
+    // Choix du coup
+    srand(time(NULL));
+
+    do
+    {
+        coup = rand() % col + 1;
+    } while (grid[0][coup - 1] != ' ');
+
+    nanosleep(&t, NULL);
+
+    if (IS_WIN)
+    {
+        system("cls");
+    }
+    else
+    {
+        system("clear");
+    }
+
+    showGrid(wherePosition(grid, line, coup, 0), line, col);
+
+}
+
+void IAMedium(Profil p, char **grid)
+{
+    int line = p.grille_lignes, col = p.grille_cols, coup;
+    struct timespec t = {1, 500}; // 1 sec et 500 nanosecondes
+
+    //wherePosition(grid, line, coup, isPlayer1)
+
+    // Choix du coup
+    do
+    {
+        coup = BestChoiceMedium(line, col, grid);
+    } while (grid[0][coup - 1] != ' ');
+    nanosleep(&t, NULL);
+
+    if (IS_WIN)
+    {
+        system("cls");
+    }
+    else
+    {
+        system("clear");
+    }
+
+    showGrid(wherePosition(grid, line, coup, 0), line, col);
+
+}
+
+int BestChoiceMedium(int line, int col, char** grid){
+    int i,j = 0;
+    srand(time(NULL));
+
+
+    char **gridTemp = createGrid(line, col);
+
+    for (i = 0; i < line; i++){
+        for (j = 0; j < col; j++){
+            gridTemp[i][j] = grid[i][j];
+        }
+    }
+
+    //on trouve le meilleur coup
+    for (i = 1; i <= col; i++){
+        if((winPosition(wherePosition(gridTemp, line, i, 0), line, col, 'O'))){
+            freeGrid(gridTemp, line);
+            return i;
+        }else{
+            dismissShot(gridTemp, line, i);
+        }
+    }
+
+    for (i = 1; i <= col; i++){
+        if((winPosition(wherePosition(gridTemp, line, i, 1), line, col, 'X'))){
+            freeGrid(gridTemp, line);
+            return i;
+        }else{
+            dismissShot(gridTemp, line, i);
+        }
+    }
+
+    freeGrid(gridTemp, line);
+
+    do
+    {
+        i = rand() % col + 1;
+    } while (grid[0][i - 1] != ' ');
+
+    return i;
+}
 
 int drawGame(char **grid, int col)
 {
@@ -192,4 +311,15 @@ int winPosition(char **grid, int line, int col, char symbole)
         }
     }
     return 0;
+}
+
+char **dismissShot(char **grid, int line,  int coup){
+    
+    for(int i = 0; i < line; i++){
+        if (grid[i][coup-1] != ' '){
+            grid[i][coup-1] = ' ';
+           break;
+        }
+    }
+    return grid;
 }
