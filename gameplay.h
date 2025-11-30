@@ -29,4 +29,15 @@ int drawGame(char **grid , int col);
 
 void playerVsIa(Profil p, NIVEAU lvl);
 
+void IAEasy(Profil p, char **grid);
+
+void IAMedium(Profil p, char **grid);
+
+void IAHard(Profil p, char **grid);
+
+int BestChoiceMedium(int line, int col, char **grid);
+
+char **dismissShot(char **grid, int line,  int coup);
+
+
 #endif // GAMEPLAY_H_INCLUDED

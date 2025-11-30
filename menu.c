@@ -47,7 +47,8 @@ void application_start() {
             switch (choix_menu) {
                 case 1:
                     printf("\n-> Lancement de 'Nouvelle Partie'...\n");
-                    twoPlayer(profil_actuel);
+                    // twoPlayer(profil_actuel);
+                    playerVsIa(profil_actuel, MOYEN);
                     break;
                 case 2:
                     profile_modify_settings(&profil_actuel);
