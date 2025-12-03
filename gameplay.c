@@ -3,90 +3,115 @@
 #include "profil.h"
 #include "utils.h"
 
-#ifdef _WIN32
-#include <conio.h>
+void pause_to_display(){
+    #ifdef _WIN32
+        fflush(stdout);
+        Sleep(500);
+    #else
+        fflush(stdout);
+        usleep(500);
+    #endif
+}
+
 /* Fonction Booleenne permettant de lire la valeur entree au clavier et 
 la mettre dans la variable "coup" uniquement dans un delai bref defini par la constante "TIMER_PLAY"*/ 
 int waitToPlay(int *coup, int delay){
-    time_t debut = time(NULL);
-    while (time(NULL) - debut < delay) {
-        // verifie si une touche du clavier est appuyee, lie la valeur et la met dans "coup"
-        if (_kbhit()) {
+    #ifdef _WIN32
+        time_t debut = time(NULL);
+        while(time(NULL)-debut < delay){
+            if(_kbhit()){
+                scanf("%d", coup);
+                return 1;
+            }
+            Sleep(50);  
+        }
+        return 0;
+
+
+    #else
+        fd_set ensemble;
+        struct timeval temps;
+        FD_ZERO(&ensemble);
+        FD_SET(STDIN_FILENO, &ensemble);
+        temps.tv_sec = delay;
+        temps.tv_usec = 0;
+
+        int ret = select(STDIN_FILENO + 1, &ensemble, NULL, NULL, &temps);
+
+        if (ret > 0) {
             scanf("%d", coup);
             return 1;
         }
-        Sleep(5);
-    }
-    return 0;
+        usleep(50);
+        return 0;
+    #endif
 }
-#endif
 
-#ifndef _WIN32
-#include <sys/select.h>
-#include <unistd.h>
 
-int waitToPlay(int *coup, int delay) {
-    fd_set ensemble;
-    struct timeval temps;
-    FD_ZERO(&ensemble);
-    FD_SET(STDIN_FILENO, &ensemble);
-    temps.tv_sec = delay;
-    temps.tv_usec = 0;
-
-    int ret = select(STDIN_FILENO + 1, &ensemble, NULL, NULL, &temps);
-
-    if (ret > 0) {
-        scanf("%d", coup);
-        return 1;
-    }
-    Sleep(5);
-    return 0;
-}
-#endif
 
 void twoPlayer(Profil p)
 {
 
     int line = p.grille_lignes, col = p.grille_cols;
-    int coup=0, valide = 0, isPlayer1 = 1, continu = 1;
-    long lenght = 0;
+    int coup, valid = 0, isPlayer1 = 1, continu = 1;
     char pseudo_adv[50];
-
 
     printf("\n %s bonne partie :-)\n", p.pseudo);
     printf("\n Entrer le pseudo de votre adversaire:\n");
+    //On lit de maniere securise la chaine contenant le pseudo en remplaçant le caractere '\n' par un '\0'
     utils_get_secure_string(pseudo_adv, 50);
 
     char **grid = createGrid(line, col);
     showGrid(grid, line, col);
+    printf("\n\n");
 
     while (continu)
     {
         do
         {
-            printf("\n %s entrez votre colonne(vous avez %d secondes): ", isPlayer1 ? p.pseudo : pseudo_adv, TIMER_PLAY);
-            fflush(stdout);
-           coup=-1;
-           // Si le joueur ne joue pas dans le temps imparti, son tour est passe
-            if (!waitToPlay(&coup, TIMER_PLAY)) {
-                printf("\nTemps écoulé ! Tour passé à l’adversaire.\n");
-                isPlayer1 = isPlayer1 ? 0 : 1;
+            time_t start_time = time(NULL);
+            //coup = -1;
+            
+            /*cette boucle affiche en continu le message avec un chrono decroissant
+              l'utilisation du '\r' dans notre printf permet ainsi d'effacer la ligne precedente 
+              et de reecrire sur cette meme ligne 
+              le 'fflush(stdout)' Force l'affichage immédiat du message du "printf" */
+            coup = -1;
+            while (1){ 
+                time_t now = time(NULL);
+                long past_time = now - start_time;
 
+                // Si le joueur ne joue pas dans le temps imparti, son tour est passe
+                if (past_time > TIMER_PLAY) {
+                    isPlayer1 = isPlayer1 ? 1 : 0;
+                    break;
+                }
+
+                printf("\r %s entrez votre colonne(vous avez %d secondes: %ld): ", isPlayer1 ? p.pseudo : pseudo_adv, 
+                                                                                  TIMER_PLAY, TIMER_PLAY - past_time);
+                fflush(stdout);
+
+                if (waitToPlay(&coup, 1)) {
+                    break;
+                }
             }
+            
             // Validation du coup
-            if (coup < 1 || coup > col){
+            if ((coup < 1 || coup > col) && coup != -1){
                 printf("\n Coup invalide\n");
+                pause_to_display();
                 isPlayer1 = isPlayer1 ? 0 : 1;
                 
             }
             // Si la colonne est pleine
-            else if (grid[0][coup - 1] != ' '){
+            else if ((grid[0][coup - 1] != ' ') && coup != -1){
                 printf("\n Cette colonne est pleine. Jouez ailleurs!\n");
+                pause_to_display();
                 isPlayer1 = isPlayer1 ? 0 : 1;
             } else{
-                valide = 1;
+                valid = 1;
             }
-        } while (!valide);
+        } while (!valid);
 
         if (IS_WIN)
         {
@@ -102,6 +127,8 @@ void twoPlayer(Profil p)
         on le declare vainqueur (sinon "Match NULL") et retour au menu */
 
         showGrid(wherePosition(grid, line, coup, isPlayer1), line, col);
+        printf("\n\n");
+
         if (winPosition(grid, line, col, isPlayer1 ? 'X' : 'O'))
         {
             printf("\nLe joueur %s a gagné !!!!\n",  isPlayer1 ? p.pseudo : pseudo_adv);

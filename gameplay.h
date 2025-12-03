@@ -4,14 +4,14 @@
 #include "profil.h"
 
 int waitToPlay(int *coup, int delay);
-
+void pause_to_display();
 typedef struct size
 {
     int width;
     int height;
 } size;
 
-
+//void newGame();
 struct game
 {
     size sizes;
@@ -19,7 +19,7 @@ struct game
     // int grille [sizes.height][sizes.width]
 };
 
-long timer();
+//long timer();
 void twoPlayer(Profil p);
 
 
