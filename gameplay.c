@@ -13,8 +13,8 @@ void pause_to_display(){
     #endif
 }
 
-/* Fonction Booleenne permettant de lire la valeur entree au clavier et 
-la mettre dans la variable "coup" uniquement dans un delai bref defini par la constante "TIMER_PLAY"*/ 
+/* Fonction Booleenne permettant de lire la valeur entree au clavier et
+la mettre dans la variable "coup" uniquement dans un delai bref defini par la constante "TIMER_PLAY"*/
 int waitToPlay(int *coup, int delay){
     #ifdef _WIN32
         time_t debut = time(NULL);
@@ -23,7 +23,7 @@ int waitToPlay(int *coup, int delay){
                 scanf("%d", coup);
                 return 1;
             }
-            Sleep(50);  
+            Sleep(50);
         }
         return 0;
 
@@ -71,13 +71,13 @@ void twoPlayer(Profil p)
         {
             time_t start_time = time(NULL);
             //coup = -1;
-            
+
             /*cette boucle affiche en continu le message avec un chrono decroissant
-              l'utilisation du '\r' dans notre printf permet ainsi d'effacer la ligne precedente 
-              et de reecrire sur cette meme ligne 
+              l'utilisation du '\r' dans notre printf permet ainsi d'effacer la ligne precedente
+              et de reecrire sur cette meme ligne
               le 'fflush(stdout)' Force l'affichage immédiat du message du "printf" */
             coup = -1;
-            while (1){ 
+            while (1){
                 time_t now = time(NULL);
                 long past_time = now - start_time;
 
@@ -87,7 +87,7 @@ void twoPlayer(Profil p)
                     break;
                 }
 
-                printf("\r %s entrez votre colonne(vous avez %d secondes: %ld): ", isPlayer1 ? p.pseudo : pseudo_adv, 
+                printf("\r %s entrez votre colonne(vous avez %d secondes: %ld): ", isPlayer1 ? p.pseudo : pseudo_adv,
                                                                                   TIMER_PLAY, TIMER_PLAY - past_time);
                 fflush(stdout);
 
@@ -95,13 +95,13 @@ void twoPlayer(Profil p)
                     break;
                 }
             }
-            
+
             // Validation du coup
             if ((coup < 1 || coup > col) && coup != -1){
                 printf("\n Coup invalide\n");
                 pause_to_display();
                 isPlayer1 = isPlayer1 ? 0 : 1;
-                
+
             }
             // Si la colonne est pleine
             else if ((grid[0][coup - 1] != ' ') && coup != -1){
@@ -252,7 +252,7 @@ void IAEasy(Profil p, char **grid)
 {
     int line = p.grille_lignes, col = p.grille_cols, coup;
     struct timespec t = {1, 500}; // 1 sec et 500 nanosecondes
-    
+
 
     // Choix du coup
     srand(time(NULL));
@@ -392,7 +392,7 @@ int winPosition(char **grid, int line, int col, char symbole)
 }
 
 char **dismissShot(char **grid, int line,  int coup){
-    
+
     for(int i = 0; i < line; i++){
         if (grid[i][coup-1] != ' '){
             grid[i][coup-1] = ' ';
