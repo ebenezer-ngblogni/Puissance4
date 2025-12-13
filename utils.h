@@ -4,8 +4,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#ifndef _WIN32
 #include <time.h>
+#include <conio.h>
+#include <windows.h>
+#ifndef _WIN32
+#include <unistd.h>
+#include <sys/select.h>
+#include <unistd.h>
+#include <string.h>
 #endif
 
 #define MIN_COL 7

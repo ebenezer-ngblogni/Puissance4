@@ -29,7 +29,7 @@ int profile_validate_pseudo(char* pseudo) {
     return 1;
 }
 
-
+// Sauvegarde le profil dans un fichier txt du dossier "files/ sous le nom "<pseudo>.config.txt"
 void profile_save(Profil * p) {
     char nom_fichier[256];
 
@@ -44,8 +44,8 @@ void profile_save(Profil * p) {
 
     fprintf(f, "%s %d %d %f %d %d",
             p->pseudo,
-            p->grille_cols,
             p->grille_lignes,
+            p->grille_cols,
             p->temps_par_coup,
             p->forme_pions,
             p->mode_par_defaut);
@@ -53,7 +53,7 @@ void profile_save(Profil * p) {
     fclose(f);
 }
 
-
+// Charge le profil depuis un fichier txt du dossier "files/" sous le nom "<pseudo>.config.txt"
 Profil profile_load(char* pseudo) {
     Profil p;
 
@@ -88,7 +88,7 @@ Profil profile_load(char* pseudo) {
     return p;
 }
 
-
+// Crée un profil par défaut avec les paramètres standards
 Profil profile_create_default(char* pseudo) {
 
     Profil p;
@@ -106,7 +106,7 @@ Profil profile_create_default(char* pseudo) {
     return p;
 }
 
-
+// Gère la connexion ou la création de profil du joueur à l'aide de son pseudo
 Profil profile_login_or_create() {
     Profil profil_actif;
     char pseudo_saisi[50];
@@ -133,13 +133,14 @@ Profil profile_login_or_create() {
             printf("-> Bienvenue, %s ! Creation de votre profil par defaut...\n", pseudo_saisi);
             profil_actif = profile_create_default(pseudo_saisi);
         }
-
+        // Pause avant de continuer
         utils_pause_to_continue();
         break;
     }
     return profil_actif;
 }
 
+// Modifie les paramètres du profil actif
 void profile_modify_settings(Profil* p) {
     int choix = 0;
     do {
@@ -155,19 +156,19 @@ void profile_modify_settings(Profil* p) {
         choix = utils_get_int();
 
         switch (choix) {
-            case 1: // Grille
-                printf("\n--- Modification Grille (Min 4x4, Max 20x20) ---\n");
+            case 1: // taille de la Grille 
+                printf("\n--- Modification Grille (Min 6x7, Max 20x20) ---\n");
                 do {
                     printf("Nouvelle hauteur (lignes) : ");
                     p->grille_lignes = utils_get_int();
-                } while (p->grille_lignes < 4 || p->grille_lignes > 20);
+                } while (p->grille_lignes < MIN_LINE || p->grille_lignes > 20);
                 do {
                     printf("Nouvelle largeur (colonnes) : ");
                     p->grille_cols = utils_get_int();
-                } while (p->grille_cols < 4 || p->grille_cols > 20);
+                } while (p->grille_cols < MIN_COL || p->grille_cols > 20);
                 profile_save(p);
                 break;
-            case 2: // Temps
+            case 2: // Temps par coup
                 printf("\n--- Modification Temps (Min 5s, Max 60s) ---\n");
                 do {
                     printf("Nouveau temps par coup (en secondes) : ");

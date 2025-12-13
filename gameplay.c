@@ -3,46 +3,115 @@
 #include "profil.h"
 #include "utils.h"
 
-// Fonction permettant de compter de nombre de seconde de chaque partie
-long timer(){
-    time_t debut = time(NULL);
-    while(1){
-        time_t maintenant = time(NULL);
-        time_t seconde = debut - maintenant;
-
-        if(seconde > TIMER_PLAY)
-            return seconde;
-    }
+void pause_to_display(){
+    #ifdef _WIN32
+        fflush(stdout);
+        Sleep(500);
+    #else
+        fflush(stdout);
+        usleep(500);
+    #endif
 }
+
+/* Fonction Booleenne permettant de lire la valeur entree au clavier et
+la mettre dans la variable "coup" uniquement dans un delai bref defini par la constante "TIMER_PLAY"*/
+int waitToPlay(int *coup, int delay){
+    #ifdef _WIN32
+        time_t debut = time(NULL);
+        while(time(NULL)-debut < delay){
+            if(_kbhit()){
+                scanf("%d", coup);
+                return 1;
+            }
+            Sleep(50);
+        }
+        return 0;
+
+
+    #else
+        fd_set ensemble;
+        struct timeval temps;
+        FD_ZERO(&ensemble);
+        FD_SET(STDIN_FILENO, &ensemble);
+        temps.tv_sec = delay;
+        temps.tv_usec = 0;
+
+        int ret = select(STDIN_FILENO + 1, &ensemble, NULL, NULL, &temps);
+
+        if (ret > 0) {
+            scanf("%d", coup);
+            return 1;
+        }
+        usleep(50);
+        return 0;
+    #endif
+}
+
+
 
 void twoPlayer(Profil p)
 {
 
     int line = p.grille_lignes, col = p.grille_cols;
-    int coup, isPlayer1 = 1, continu = 1;
+    int coup, valid = 0, isPlayer1 = 1, continu = 1;
+    char pseudo_adv[50];
 
-
-    printf("\n %s bonne partie : \n", p.pseudo);
+    printf("\n %s bonne partie :-)\n", p.pseudo);
+    printf("\n Entrer le pseudo de votre adversaire:\n");
+    //On lit de maniere securise la chaine contenant le pseudo en remplaçant le caractere '\n' par un '\0'
+    utils_get_secure_string(pseudo_adv, 50);
 
     char **grid = createGrid(line, col);
     showGrid(grid, line, col);
+    printf("\n\n");
 
     while (continu)
     {
         do
         {
+            time_t start_time = time(NULL);
+            //coup = -1;
 
-            printf("\n %s entrez votre colonne : ", isPlayer1 ? p.pseudo : "Adv");
-            scanf("%d", &coup);
-            if (coup < 1 || coup > col)
-            {
+            /*cette boucle affiche en continu le message avec un chrono decroissant
+              l'utilisation du '\r' dans notre printf permet ainsi d'effacer la ligne precedente
+              et de reecrire sur cette meme ligne
+              le 'fflush(stdout)' Force l'affichage immédiat du message du "printf" */
+            coup = -1;
+            while (1){
+                time_t now = time(NULL);
+                long past_time = now - start_time;
+
+                // Si le joueur ne joue pas dans le temps imparti, son tour est passe
+                if (past_time > TIMER_PLAY) {
+                    isPlayer1 = isPlayer1 ? 1 : 0;
+                    break;
+                }
+
+                printf("\r %s entrez votre colonne(vous avez %d secondes: %ld): ", isPlayer1 ? p.pseudo : pseudo_adv,
+                                                                                  TIMER_PLAY, TIMER_PLAY - past_time);
+                fflush(stdout);
+
+                if (waitToPlay(&coup, 1)) {
+                    break;
+                }
+            }
+
+            // Validation du coup
+            if ((coup < 1 || coup > col) && coup != -1){
                 printf("\n Coup invalide\n");
+                pause_to_display();
+                isPlayer1 = isPlayer1 ? 0 : 1;
+
             }
-            else if (grid[0][coup - 1] != ' ')
-            {
+            // Si la colonne est pleine
+            else if ((grid[0][coup - 1] != ' ') && coup != -1){
                 printf("\n Cette colonne est pleine. Jouez ailleurs!\n");
+                pause_to_display();
+                isPlayer1 = isPlayer1 ? 0 : 1;
+            } else{
+                valid = 1;
             }
-        } while (coup < 1 || coup > col || grid[0][coup - 1] != ' ');
+        } while (!valid);
 
         if (IS_WIN)
         {
@@ -58,9 +127,11 @@ void twoPlayer(Profil p)
         on le declare vainqueur (sinon "Match NULL") et retour au menu */
 
         showGrid(wherePosition(grid, line, coup, isPlayer1), line, col);
+        printf("\n\n");
+
         if (winPosition(grid, line, col, isPlayer1 ? 'X' : 'O'))
         {
-            printf("\nLe joueur %s a gagné !!!!\n",  isPlayer1 ? p.pseudo : "Adv");
+            printf("\nLe joueur %s a gagné !!!!\n",  isPlayer1 ? p.pseudo : pseudo_adv);
             flush_stdin_buffer();
             utils_pause_to_continue();
             break;
@@ -75,11 +146,10 @@ void twoPlayer(Profil p)
 
         isPlayer1 = isPlayer1 ? 0 : 1;
     }
-
     freeGrid(grid, line);
 }
 
-/*void playerVsIa(Profil p, NIVEAU lvl)
+void playerVsIa(Profil p, NIVEAU lvl)
 {
 
     int line = p.grille_lignes, col = p.grille_cols;
@@ -122,40 +192,159 @@ void twoPlayer(Profil p)
 
             if (winPosition(grid, line, col, isPlayer ? 'X' : 'O'))
             {
-                printf("\nLe joueur %s a gagné !!!!\n", isPlayer ? p.pseudo : "Adv");
-                isPlayer ? printf("\nLe joueur %s a gagné !!!!\n", p.pseudo) : printf("\nVous avez perdu !\n");
+                printf("\nVous avez gagné !!!!\n");
+                utils_pause_to_continue();
+                flush_stdin_buffer();
                 break;
             }
             else if (drawGame(grid, col))
             {
                 printf("\n Match NULL, Aucun gagnant !!! \n");
+                utils_pause_to_continue();
+                flush_stdin_buffer();
                 break;
             }
 
             isPlayer = isPlayer ? 0 : 1;
-        }else{
+        }
+        else
+        {
             switch (lvl)
             {
-            case FACILE :
-                IAFacile();
+            case FACILE:
+                IAEasy(p, grid);
                 break;
 
-            case MOYEN :
-
+            case MOYEN:
+                IAMedium(p, grid);
                 break;
 
-            case DIFFICILE :
-
+            case DIFFICILE:
+                //IAHard(p, grid);
                 break;
 
             default:
                 break;
             }
+
+            if (winPosition(grid, line, col, 'O'))
+            {
+                printf("\nVous avez perdu !\n");
+                utils_pause_to_continue();
+                flush_stdin_buffer();
+                break;
+            }
+            else if (drawGame(grid, col))
+            {
+                printf("\n Match NULL, Aucun gagnant !!! \n");
+                utils_pause_to_continue();
+                flush_stdin_buffer();
+                break;
+            }
+            isPlayer = isPlayer ? 0 : 1;
         }
     }
 
     freeGrid(grid, line);
-}*/
+}
+
+void IAEasy(Profil p, char **grid)
+{
+    int line = p.grille_lignes, col = p.grille_cols, coup;
+    struct timespec t = {1, 500}; // 1 sec et 500 nanosecondes
+
+
+    // Choix du coup
+    srand(time(NULL));
+
+    do
+    {
+        coup = rand() % col + 1;
+    } while (grid[0][coup - 1] != ' ');
+
+    nanosleep(&t, NULL);
+
+    if (IS_WIN)
+    {
+        system("cls");
+    }
+    else
+    {
+        system("clear");
+    }
+
+    showGrid(wherePosition(grid, line, coup, 0), line, col);
+
+}
+
+void IAMedium(Profil p, char **grid)
+{
+    int line = p.grille_lignes, col = p.grille_cols, coup;
+    struct timespec t = {1, 500}; // 1 sec et 500 nanosecondes
+
+    //wherePosition(grid, line, coup, isPlayer1)
+
+    // Choix du coup
+    do
+    {
+        coup = BestChoiceMedium(line, col, grid);
+    } while (grid[0][coup - 1] != ' ');
+    nanosleep(&t, NULL);
+
+    if (IS_WIN)
+    {
+        system("cls");
+    }
+    else
+    {
+        system("clear");
+    }
+
+    showGrid(wherePosition(grid, line, coup, 0), line, col);
+
+}
+
+int BestChoiceMedium(int line, int col, char** grid){
+    int i,j = 0;
+    srand(time(NULL));
+
+
+    char **gridTemp = createGrid(line, col);
+
+    for (i = 0; i < line; i++){
+        for (j = 0; j < col; j++){
+            gridTemp[i][j] = grid[i][j];
+        }
+    }
+
+    //on trouve le meilleur coup
+    for (i = 1; i <= col; i++){
+        if((winPosition(wherePosition(gridTemp, line, i, 0), line, col, 'O'))){
+            freeGrid(gridTemp, line);
+            return i;
+        }else{
+            dismissShot(gridTemp, line, i);
+        }
+    }
+
+    for (i = 1; i <= col; i++){
+        if((winPosition(wherePosition(gridTemp, line, i, 1), line, col, 'X'))){
+            freeGrid(gridTemp, line);
+            return i;
+        }else{
+            dismissShot(gridTemp, line, i);
+        }
+    }
+
+    freeGrid(gridTemp, line);
+
+    do
+    {
+        i = rand() % col + 1;
+    } while (grid[0][i - 1] != ' ');
+
+    return i;
+}
 
 int drawGame(char **grid, int col)
 {
@@ -198,4 +387,16 @@ int winPosition(char **grid, int line, int col, char symbole)
         }
     }
     return 0;
+}
+
+
+char **dismissShot(char **grid, int line,  int coup){
+
+    for(int i = 0; i < line; i++){
+        if (grid[i][coup-1] != ' '){
+            grid[i][coup-1] = ' ';
+           break;
+        }
+    }
+    return grid;
 }

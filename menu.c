@@ -46,11 +46,26 @@ void application_start() {
 
             switch (choix_menu) {
                 case 1:
-                    printf("\n-> Lancement de 'Nouvelle Partie'...\n");
-                    twoPlayer(profil_actuel);
+                    printf(" 1. Joueur contre Joueur\n");
+                    printf(" 2. Joueur contre IA\n");
+                    printf("\nVotre choix : ");
+                    int mode_jeu = utils_get_int();
+                    if (mode_jeu == 1)
+                        twoPlayer(profil_actuel);
+                    else if (mode_jeu == 2)
+                        printf(" 1- Facile\n");
+                        printf(" 2- Moyen\n");
+                        int niveau_ia = utils_get_int();
+                        if (niveau_ia == 1)
+                            playerVsIa(profil_actuel, FACILE);
+                        else if (niveau_ia == 2)
+                            playerVsIa(profil_actuel, MOYEN);
+                        else
+                            printf("\n-> Choix invalide. Retour au menu principal.\n");
                     break;
                 case 2:
                     profile_modify_settings(&profil_actuel);
+                    //twoPlayer(profil_actuel);
                     break;
                 case 3:
                     printf("\n-> Affichage de 'Historique'...\n(Bientot disponible !)");
