@@ -53,7 +53,15 @@ void application_start() {
                     if (mode_jeu == 1)
                         twoPlayer(profil_actuel);
                     else if (mode_jeu == 2)
-                        playerVsIa(profil_actuel, MOYEN);
+                        printf(" 1- Facile\n");
+                        printf(" 2- Moyen\n");
+                        int niveau_ia = utils_get_int();
+                        if (niveau_ia == 1)
+                            playerVsIa(profil_actuel, FACILE);
+                        else if (niveau_ia == 2)
+                            playerVsIa(profil_actuel, MOYEN);
+                        else
+                            printf("\n-> Choix invalide. Retour au menu principal.\n");
                     break;
                 case 2:
                     profile_modify_settings(&profil_actuel);

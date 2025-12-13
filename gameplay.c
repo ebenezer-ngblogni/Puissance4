@@ -391,6 +391,7 @@ int winPosition(char **grid, int line, int col, char symbole)
     return 0;
 }
 
+
 char **dismissShot(char **grid, int line,  int coup){
 
     for(int i = 0; i < line; i++){
