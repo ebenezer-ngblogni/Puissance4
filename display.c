@@ -28,7 +28,7 @@ char **createGrid(int line, int col){
 void showGrid(char **grid, int line, int col){
     int i,j,k;
 
-    printf("\n \033[1;34m--- PUISSANCE 4 ---\033[0m \n");
+    printf("\n \033[1;34mOXO--- PUISSANCE 4 ---OXO\033[0m \n\n");
     
     //Affichage des indices des colonnes au-dessus de la grille
     for(i = 1; i <= col; i++){
@@ -71,7 +71,7 @@ void showGrid(char **grid, int line, int col){
     }
 }
 
-// Fonction de liberation de la memoire
+// Fonction de liberation de la memoire allouee pour la grille
 void freeGrid(char **grid, int line){
     for(int i = 0; i <line; i++)
         free(grid[i]);
@@ -79,7 +79,7 @@ void freeGrid(char **grid, int line){
 }
 
 
-// Fonction de calcul de position
+// Fonction de calcul de position d'un coup dans la grille
 char **wherePosition(char **grid, int line,  int coup, int isPlayer1){
     
     for(int i = line-1; i>= 0; i--){

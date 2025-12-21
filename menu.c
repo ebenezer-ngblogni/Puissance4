@@ -2,11 +2,12 @@
 #include "profil.h"
 #include "display.h"
 #include "gameplay.h"
+#include "file.h"
 
 
 void application_start() {
 
-    // Initialisation
+    // Initialisation du dossier "files/"
     profile_initialize_directory();
 
     Profil profil_actuel;
@@ -31,7 +32,7 @@ void application_start() {
             printf(" Reglages : %dx%d | %.1fs | Mode: %s\n",
                    profil_actuel.grille_lignes, profil_actuel.grille_cols,
                    profil_actuel.temps_par_coup,
-                   (profil_actuel.mode_par_defaut == 1 ? "PvP" : "PvIA"));
+                   (profil_actuel.mode_jeu == 1 ? "PvP" : "PvIA"));
             printf("----------------------\n");
 
             printf(" 1. Nouvelle Partie\n");
@@ -50,10 +51,11 @@ void application_start() {
                     printf(" 2. Joueur contre IA\n");
                     printf("\nVotre choix : ");
                     int mode_jeu = utils_get_int();
-                    if (mode_jeu == 1)
+                    if (mode_jeu == 1){
                         twoPlayer(profil_actuel);
-                    else if (mode_jeu == 2)
-                        printf(" 1- Facile\n");
+                    }  
+                    else if (mode_jeu == 2){
+                         printf(" 1- Facile\n");
                         printf(" 2- Moyen\n");
                         int niveau_ia = utils_get_int();
                         if (niveau_ia == 1)
@@ -62,14 +64,13 @@ void application_start() {
                             playerVsIa(profil_actuel, MOYEN);
                         else
                             printf("\n-> Choix invalide. Retour au menu principal.\n");
+                    } 
                     break;
                 case 2:
                     profile_modify_settings(&profil_actuel);
-                    //twoPlayer(profil_actuel);
                     break;
                 case 3:
-                    printf("\n-> Affichage de 'Historique'...\n(Bientot disponible !)");
-                    utils_pause_to_continue();
+                    loadGame(profil_actuel);
                     break;
                 case 4:
                     printf("\n-> Chargement de 'Reprendre partie'...\n(Bientot disponible !)");
@@ -93,5 +94,8 @@ void application_start() {
 
     // Fin du programme
     utils_clear_screen();
-    printf("\nMerci d'avoir joue ! A bientot.\n");
+    printf("================================================\n");
+    printf("\nMerci d'avoir joue %s A bientot.\n",profil_actuel.pseudo);
+    printf("================================================\n");
+
 }

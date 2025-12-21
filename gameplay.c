@@ -2,6 +2,7 @@
 #include "display.h"
 #include "profil.h"
 #include "utils.h"
+#include "file.c"
 
 void pause_to_display(){
     #ifdef _WIN32
@@ -55,6 +56,9 @@ void twoPlayer(Profil p)
     int line = p.grille_lignes, col = p.grille_cols;
     int coup, valid = 0, isPlayer1 = 1, continu = 1;
     char pseudo_adv[50];
+    Save *saves = NULL;
+    p.mode_jeu = 1;
+
 
     printf("\n %s bonne partie :-)\n", p.pseudo);
     printf("\n Entrer le pseudo de votre adversaire:\n");
@@ -65,6 +69,7 @@ void twoPlayer(Profil p)
     showGrid(grid, line, col);
     printf("\n\n");
 
+    time_t start_game = time(NULL);
     while (continu)
     {
         do
@@ -110,8 +115,12 @@ void twoPlayer(Profil p)
                 isPlayer1 = isPlayer1 ? 0 : 1;
             } else{
                 valid = 1;
+                //Enregistrer le coup dans la liste des sauvegardes
+                getCoup(isPlayer1, coup, &saves);
             }
         } while (!valid);
+
+
 
         if (IS_WIN)
         {
@@ -121,6 +130,8 @@ void twoPlayer(Profil p)
         {
             system("clear");
         }
+
+
 
         /* Si un joueur a gagne la partie (sinon si la personne n'a pas gagne),
         Si un joueur a gagne la partie (sinon si la personne n'a pas gagne),
@@ -146,23 +157,34 @@ void twoPlayer(Profil p)
 
         isPlayer1 = isPlayer1 ? 0 : 1;
     }
+
+    time_t end_game = time(NULL);
+    long score_time = end_game - start_game;
+    // Sauvegarde l'ensemble des coups joues dans le fichier de configuration du profil
+    saveIntoFile(saves, p, pseudo_adv, score_time);
     freeGrid(grid, line);
 }
 
+// Fonctionnalité du mode Joueur contre IA
 void playerVsIa(Profil p, NIVEAU lvl)
 {
 
     int line = p.grille_lignes, col = p.grille_cols;
-    int coup, rate = 1, isPlayer = 1, continu = 1;
+    int coup, isPlayer1 = 1, continu = 1, valid = 0;
+    Save *saves = NULL;
+    p.mode_jeu = 0;
 
     printf("\n %s bonne partie :-)\n", p.pseudo);
 
     char **grid = createGrid(line, col);
     showGrid(grid, line, col);
 
+    time_t start_game = time(NULL);
+    char pseudo_adv[50] = "IA";
+
     while (continu)
     {
-        if (isPlayer)
+        if (isPlayer1)
         {
 
             do
@@ -176,8 +198,12 @@ void playerVsIa(Profil p, NIVEAU lvl)
                 else if (grid[0][coup - 1] != ' ')
                 {
                     printf("\n Cette colonne est pleine. Jouez ailleurs!\n");
-                }
-            } while (coup < 1 || coup > col || grid[0][coup - 1] != ' ');
+                }else{
+                    valid = 1;
+                    // Enregistrer le coup dans la liste des sauvegardes
+                    getCoup(isPlayer1, coup, &saves);
+            }
+            } while (!valid);
 
             if (IS_WIN)
             {
@@ -188,9 +214,9 @@ void playerVsIa(Profil p, NIVEAU lvl)
                 system("clear");
             }
 
-            showGrid(wherePosition(grid, line, coup, isPlayer), line, col);
+            showGrid(wherePosition(grid, line, coup, isPlayer1), line, col);
 
-            if (winPosition(grid, line, col, isPlayer ? 'X' : 'O'))
+            if (winPosition(grid, line, col, isPlayer1 ? 'X' : 'O'))
             {
                 printf("\nVous avez gagné !!!!\n");
                 utils_pause_to_continue();
@@ -205,18 +231,20 @@ void playerVsIa(Profil p, NIVEAU lvl)
                 break;
             }
 
-            isPlayer = isPlayer ? 0 : 1;
+            isPlayer1 = isPlayer1 ? 0 : 1;
         }
         else
         {
             switch (lvl)
             {
             case FACILE:
-                IAEasy(p, grid);
+                IAEasy(p, grid, &saves);
+                strcpy(pseudo_adv, "IA - FACILE");
                 break;
 
             case MOYEN:
-                IAMedium(p, grid);
+                IAMedium(p, grid, &saves);
+                strcpy(pseudo_adv, "IA - MOYEN");
                 break;
 
             case DIFFICILE:
@@ -241,27 +269,34 @@ void playerVsIa(Profil p, NIVEAU lvl)
                 flush_stdin_buffer();
                 break;
             }
-            isPlayer = isPlayer ? 0 : 1;
+            isPlayer1 = isPlayer1 ? 0 : 1;
         }
     }
 
+    time_t end_game = time(NULL);
+    long score_time = end_game - start_game;
+    // Sauvegarde l'ensemble des coups joues dans le fichier de configuration du profil
+    saveIntoFile(saves, p, pseudo_adv, score_time);
     freeGrid(grid, line);
 }
 
-void IAEasy(Profil p, char **grid)
+// Fonctionnalité de l'IA de niveau facile
+void IAEasy(Profil p, char **grid, Save **saves)
 {
     int line = p.grille_lignes, col = p.grille_cols, coup;
+    int isPlayer1 = 0;
     struct timespec t = {1, 500}; // 1 sec et 500 nanosecondes
 
 
     // Choix du coup
+    // Initialisation du générateur de nombres aléatoires
     srand(time(NULL));
 
     do
     {
         coup = rand() % col + 1;
     } while (grid[0][coup - 1] != ' ');
-
+    getCoup(isPlayer1, coup, saves);
     nanosleep(&t, NULL);
 
     if (IS_WIN)
@@ -277,7 +312,8 @@ void IAEasy(Profil p, char **grid)
 
 }
 
-void IAMedium(Profil p, char **grid)
+// Fonctionnalité de l'IA de niveau moyen
+void IAMedium(Profil p, char **grid, Save **saves)
 {
     int line = p.grille_lignes, col = p.grille_cols, coup;
     struct timespec t = {1, 500}; // 1 sec et 500 nanosecondes
@@ -289,6 +325,9 @@ void IAMedium(Profil p, char **grid)
     {
         coup = BestChoiceMedium(line, col, grid);
     } while (grid[0][coup - 1] != ' ');
+
+    getCoup(0, coup, saves);
+
     nanosleep(&t, NULL);
 
     if (IS_WIN)
@@ -304,8 +343,10 @@ void IAMedium(Profil p, char **grid)
 
 }
 
+// Fonction qui retourne le meilleur coup pour l'IA de niveau moyen
 int BestChoiceMedium(int line, int col, char** grid){
     int i,j = 0;
+    // Initialisation du générateur de nombres aléatoires pour le choix aléatoire du coup de l'IA
     srand(time(NULL));
 
 
@@ -346,6 +387,7 @@ int BestChoiceMedium(int line, int col, char** grid){
     return i;
 }
 
+// Vérifie si la grille est pleine (match nul)
 int drawGame(char **grid, int col)
 {
     int cp = 0;
@@ -360,6 +402,7 @@ int drawGame(char **grid, int col)
     return 0;
 }
 
+// Vérifie si un joueur a gagné la partie
 int winPosition(char **grid, int line, int col, char symbole)
 {
 

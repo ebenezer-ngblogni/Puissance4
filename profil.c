@@ -42,13 +42,13 @@ void profile_save(Profil * p) {
         return;
     }
 
-    fprintf(f, "%s %d %d %f %d %d",
+    fprintf(f, "%s %d %d %.2f %d %d\n",
             p->pseudo,
             p->grille_lignes,
             p->grille_cols,
             p->temps_par_coup,
             p->forme_pions,
-            p->mode_par_defaut);
+            p->mode_jeu);
 
     fclose(f);
 }
@@ -69,13 +69,14 @@ Profil profile_load(char* pseudo) {
         return p;
     }
 
+    
     if (fscanf(f, "%s %d %d %f %d %d",
                p.pseudo,
                &p.grille_cols,
                &p.grille_lignes,
                &p.temps_par_coup,
                &p.forme_pions,
-               &p.mode_par_defaut) == 6)
+               &p.mode_jeu) == 6)
     {
 
     }
@@ -99,7 +100,7 @@ Profil profile_create_default(char* pseudo) {
     p.grille_lignes = MIN_LINE;
     p.temps_par_coup = TIMER_PLAY;
     p.forme_pions = 1;
-    p.mode_par_defaut = 1;
+    p.mode_jeu = 1;
 
     profile_save(&p);
 
@@ -142,20 +143,21 @@ Profil profile_login_or_create() {
 
 // Modifie les paramètres du profil actif
 void profile_modify_settings(Profil* p) {
-    int choix = 0;
+    int choice = 0;
     do {
         utils_clear_screen();
         printf("=== PARAMETRES (Profil: %s) ===\n", p->pseudo);
         printf(" 1. Modifier la Grille (Actuel: %dx%d)\n", p->grille_lignes, p->grille_cols);
         printf(" 2. Modifier le Temps/coup (Actuel: %.1fs)\n", p->temps_par_coup);
         printf(" 3. Modifier la Forme des Pions (Actuel: %d)\n", p->forme_pions);
-        printf(" 4. Modifier le Mode par defaut (Actuel: %s)\n", (p->mode_par_defaut == 1 ? "PvP" : "PvIA"));
+        printf(" 4. Modifier le Mode par defaut (Actuel: %s)\n", (p->mode_jeu == 1 ? "PvP" : "PvIA"));
         printf(" 5. Retour au menu principal\n");
         printf("\nVotre choix : ");
 
-        choix = utils_get_int();
+        // Lecture du choix utilisateur
+        choice = utils_get_int();
 
-        switch (choix) {
+        switch (choice) {
             case 1: // taille de la Grille 
                 printf("\n--- Modification Grille (Min 6x7, Max 20x20) ---\n");
                 do {
@@ -169,11 +171,11 @@ void profile_modify_settings(Profil* p) {
                 profile_save(p);
                 break;
             case 2: // Temps par coup
-                printf("\n--- Modification Temps (Min 5s, Max 60s) ---\n");
+                printf("\n--- Modification Temps (Min 15s, Max 30s) ---\n");
                 do {
                     printf("Nouveau temps par coup (en secondes) : ");
                     p->temps_par_coup = utils_get_float();
-                } while (p->temps_par_coup < 5.0 || p->temps_par_coup > 60.0);
+                } while (p->temps_par_coup < 15.0 || p->temps_par_coup > 30.0);
                 profile_save(p);
                 break;
             case 3: // Forme
@@ -188,8 +190,8 @@ void profile_modify_settings(Profil* p) {
                 printf("\n--- Modification Mode (1=PvP, 2=PvIA) ---\n");
                 do {
                     printf("Votre choix (1 ou 2) : ");
-                    p->mode_par_defaut = utils_get_int();
-                } while (p->mode_par_defaut < 1 || p->mode_par_defaut > 2);
+                    p->mode_jeu = utils_get_int();
+                } while (p->mode_jeu < 1 || p->mode_jeu > 2);
                 profile_save(p);
                 break;
             case 5: // Retour
@@ -200,5 +202,5 @@ void profile_modify_settings(Profil* p) {
                 utils_pause_to_continue();
                 break;
         }
-    } while (choix != 5);
+    } while (choice != 5);
 }

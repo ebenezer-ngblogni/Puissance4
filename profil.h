@@ -9,7 +9,7 @@ struct profil{
     int grille_cols;
     float temps_par_coup;
     int forme_pions;
-    int mode_par_defaut;
+    int mode_jeu;
 };
 typedef struct profil Profil;
 

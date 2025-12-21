@@ -14,10 +14,9 @@ void showGrid(char **grid,int line, int col);
 //fonction de liberation de la memoire
 void freeGrid(char **grid, int line);
 
-//fonction de calcul de position
+//fonction de calcul de position d'un coup dans la grille
 char **wherePosition(char **grid, int line, int coup, int isPlayer1);
 
-void showPlayer1piece();
-void showPlayer2piece();
+
 
 #endif // DISPLAY_H_INCLUDED
