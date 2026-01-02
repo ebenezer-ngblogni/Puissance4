@@ -1,16 +1,8 @@
 #ifndef FILE_H_INCLUDED
 #define FILE_H_INCLUDED
-#include "options.h"
 #include "utils.h"
 #include "profil.h"
 
-
-
-
-struct score{
-    char pseudo[20];
-    int score;
-};
 
 struct save{
     int player;

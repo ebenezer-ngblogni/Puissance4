@@ -5,13 +5,13 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
-#include <conio.h>
-#include <windows.h>
-#ifndef _WIN32
-#include <unistd.h>
-#include <sys/select.h>
-#include <unistd.h>
-#include <string.h>
+
+#ifdef _WIN32
+    #include <conio.h>
+    #include <windows.h>
+#else
+    #include <unistd.h>
+    #include <sys/select.h>
 #endif
 
 #define MIN_COL 7
@@ -29,7 +29,7 @@
     #define IS_MAC 0
 #endif // UTILS_H_INCLUDED
 
-typedef enum niveau {FACILE, MOYEN, DIFFICILE} NIVEAU;
+typedef enum niveau {FACILE, MOYEN} NIVEAU;
 
 // Efface l'écran (multi-plateforme)
 void utils_clear_screen();

@@ -4,7 +4,10 @@
 #include "utils.h"
 #include "file.c"
 
-void pause_to_display(){
+/*Petite pause pour permettre au joueur de voir les messages
+ avant le rafraichissement de l'ecran
+*/
+void pauseToDisplay(){
     #ifdef _WIN32
         fflush(stdout);
         Sleep(500);
@@ -14,8 +17,10 @@ void pause_to_display(){
     #endif
 }
 
+
 /* Fonction Booleenne permettant de lire la valeur entree au clavier et
-la mettre dans la variable "coup" uniquement dans un delai bref defini par la constante "TIMER_PLAY"*/
+la mettre dans la variable "coup" uniquement dans un delai bref defini par la constante "TIMER_PLAY"
+*/
 int waitToPlay(int *coup, int delay){
     #ifdef _WIN32
         time_t debut = time(NULL);
@@ -49,7 +54,13 @@ int waitToPlay(int *coup, int delay){
 }
 
 
-
+/*
+Fonctionnalité du mode Joueur contre Joueur. La fonction prend en parametre le profil du joueur courant
+Avant le debut de la partie, le joueur entre son adversaire.
+A chaque tour, un joueur a un temps limité pour jouer son coup.
+A la fin de la partie, les informations de la partie sont sauvegardées dans le fichier de configuration du profil.
+Et la grille est liberée de la mémoire.
+*/
 void twoPlayer(Profil p)
 {
 
@@ -104,14 +115,14 @@ void twoPlayer(Profil p)
             // Validation du coup
             if ((coup < 1 || coup > col) && coup != -1){
                 printf("\n Coup invalide\n");
-                pause_to_display();
+                pauseToDisplay();
                 isPlayer1 = isPlayer1 ? 0 : 1;
 
             }
             // Si la colonne est pleine
             else if ((grid[0][coup - 1] != ' ') && coup != -1){
                 printf("\n Cette colonne est pleine. Jouez ailleurs!\n");
-                pause_to_display();
+                pauseToDisplay();
                 isPlayer1 = isPlayer1 ? 0 : 1;
             } else{
                 valid = 1;
@@ -165,7 +176,10 @@ void twoPlayer(Profil p)
     freeGrid(grid, line);
 }
 
-// Fonctionnalité du mode Joueur contre IA
+/*Fonctionnalité du mode Joueur contre IA. La fonction prend en parametre le profil du joueur courant
+et le niveau de l'IA (facile, moyen, difficile).
+
+*/
 void playerVsIa(Profil p, NIVEAU lvl)
 {
 
@@ -198,6 +212,9 @@ void playerVsIa(Profil p, NIVEAU lvl)
                 else if (grid[0][coup - 1] != ' ')
                 {
                     printf("\n Cette colonne est pleine. Jouez ailleurs!\n");
+                    pauseToDisplay();
+                    isPlayer1 = isPlayer1 ? 0 : 1;
+
                 }else{
                     valid = 1;
                     // Enregistrer le coup dans la liste des sauvegardes
@@ -245,10 +262,6 @@ void playerVsIa(Profil p, NIVEAU lvl)
             case MOYEN:
                 IAMedium(p, grid, &saves);
                 strcpy(pseudo_adv, "IA - MOYEN");
-                break;
-
-            case DIFFICILE:
-                //IAHard(p, grid);
                 break;
 
             default:

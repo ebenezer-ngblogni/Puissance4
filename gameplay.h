@@ -8,7 +8,7 @@
 int waitToPlay(int *coup, int delay);
 
 // Pause pour afficher les messages
-void pause_to_display();
+void pauseToDisplay();
 
 
 typedef struct size
@@ -42,9 +42,6 @@ void IAEasy(Profil p, char **grid, Save **saves);
 
 // Fonctionnalité de l'IA de niveau moyen
 void IAMedium(Profil p, char **grid, Save **saves);
-
-
-void IAHard(Profil p, char **grid);
 
 // Fonction qui retourne le meilleur coup pour l'IA de niveau moyen
 int BestChoiceMedium(int line, int col, char **grid);

@@ -32,25 +32,79 @@ int profile_validate_pseudo(char* pseudo) {
 // Sauvegarde le profil dans un fichier txt du dossier "files/ sous le nom "<pseudo>.config.txt"
 void profile_save(Profil * p) {
     char nom_fichier[256];
+    char buffer[256];
+    int nb_lignes = 0;
 
+
+    // Construction du nom du fichier
     sprintf(nom_fichier, "files/%s.config.txt", p->pseudo);
 
-    FILE * f = fopen(nom_fichier, "w");
+    FILE * f = fopen(nom_fichier, "r");
 
+    // Si le fichier n'existe pas, on le crée et on écrit directement les données
     if (f == NULL) {
-        printf("Erreur: Impossible d'ouvrir/creer le fichier de profil. Verifiez que le dossier 'files' existe.\n");
-        return;
-    }
-
-    fprintf(f, "%s %d %d %.2f %d %d\n",
+        //printf("Erreur: Impossible d'ouvrir/creer le fichier de profil. Verifiez que le dossier 'files' existe.\n");
+        f = fopen(nom_fichier, "w");
+        fprintf(f, "%s %d %d %.2f %d %d\n",
             p->pseudo,
             p->grille_lignes,
             p->grille_cols,
             p->temps_par_coup,
             p->forme_pions,
             p->mode_jeu);
+        fclose(f);
+        return;
+    }
+    
+    // Compte le nombre de lignes dans le fichier
+    // Si plus d'une ligne, on cree un fichier temporaire pour les modifications 
+    // et on remplace l'ancien fichier par le nouveau une fois les modifications faites.
+    // Sinon, on ecrase directement le fichier existant
+    while (fgets(buffer, sizeof(buffer), f)) {
+        nb_lignes++;
+        if (nb_lignes > 1) {
+            break;
+        }
+    }
+    rewind(f);
 
-    fclose(f);
+    if (nb_lignes > 1) {
+        FILE *tmp = fopen("temp.txt", "w");
+        int found = 1;
+
+        
+        while(fgets(buffer, sizeof(buffer), f)) {
+            if(found){
+                fprintf(tmp, "%s %d %d %.2f %d %d\n",
+                    p->pseudo,
+                    p->grille_lignes,
+                    p->grille_cols,
+                    p->temps_par_coup,
+                    p->forme_pions,
+                    p->mode_jeu);
+                found = 0;
+            }
+            else{
+                fputs(buffer, tmp);
+            }
+        }
+        fclose(f);
+        fclose(tmp);
+        remove(nom_fichier);
+        rename("temp.txt", nom_fichier);
+    } else {
+        f = fopen(nom_fichier, "w");
+        fprintf(f, "%s %d %d %.2f %d %d\n",
+            p->pseudo,
+            p->grille_lignes,
+            p->grille_cols,
+            p->temps_par_coup,
+            p->forme_pions,
+            p->mode_jeu);
+        fclose(f);
+    }
+
+   
 }
 
 // Charge le profil depuis un fichier txt du dossier "files/" sous le nom "<pseudo>.config.txt"
@@ -72,8 +126,8 @@ Profil profile_load(char* pseudo) {
     
     if (fscanf(f, "%s %d %d %f %d %d",
                p.pseudo,
-               &p.grille_cols,
                &p.grille_lignes,
+               &p.grille_cols,
                &p.temps_par_coup,
                &p.forme_pions,
                &p.mode_jeu) == 6)
