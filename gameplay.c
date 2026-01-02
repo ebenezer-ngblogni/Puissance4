@@ -8,11 +8,10 @@
  avant le rafraichissement de l'ecran
 */
 void pauseToDisplay(){
+    fflush(stdout);
     #ifdef _WIN32
-        fflush(stdout);
         Sleep(500);
     #else
-        fflush(stdout);
         usleep(500);
     #endif
 }
@@ -67,6 +66,8 @@ void twoPlayer(Profil p)
     int line = p.grille_lignes, col = p.grille_cols;
     int coup, valid = 0, isPlayer1 = 1, continu = 1;
     char pseudo_adv[50];
+    char message_victoire[256];
+
     Save *saves = NULL;
     p.mode_jeu = 1;
 
@@ -154,6 +155,7 @@ void twoPlayer(Profil p)
         if (winPosition(grid, line, col, isPlayer1 ? 'X' : 'O'))
         {
             printf("\nLe joueur %s a gagné !!!!\n",  isPlayer1 ? p.pseudo : pseudo_adv);
+            sprintf(message_victoire, "Le joueur %s a gagné !!!!",  isPlayer1 ? p.pseudo : pseudo_adv);
             flush_stdin_buffer();
             utils_pause_to_continue();
             break;
@@ -161,6 +163,7 @@ void twoPlayer(Profil p)
         else if (drawGame(grid, col))
         {
             printf("\n Match NULL, Aucun gagnant !!! \n");
+            sprintf(message_victoire, " Match NULL, Aucun gagnant !!! ");
             flush_stdin_buffer();
             utils_pause_to_continue();
             break;
@@ -172,7 +175,7 @@ void twoPlayer(Profil p)
     time_t end_game = time(NULL);
     long score_time = end_game - start_game;
     // Sauvegarde l'ensemble des coups joues dans le fichier de configuration du profil
-    saveIntoFile(saves, p, pseudo_adv, score_time);
+    saveIntoFile(saves, p, pseudo_adv, score_time, message_victoire);
     freeGrid(grid, line);
 }
 
@@ -185,6 +188,7 @@ void playerVsIa(Profil p, NIVEAU lvl)
 
     int line = p.grille_lignes, col = p.grille_cols;
     int coup, isPlayer1 = 1, continu = 1, valid = 0;
+    char message_victoire[256];
     Save *saves = NULL;
     p.mode_jeu = 0;
 
@@ -236,6 +240,8 @@ void playerVsIa(Profil p, NIVEAU lvl)
             if (winPosition(grid, line, col, isPlayer1 ? 'X' : 'O'))
             {
                 printf("\nVous avez gagné !!!!\n");
+                sprintf(message_victoire, "Vous avez gagné !!!!");
+
                 utils_pause_to_continue();
                 flush_stdin_buffer();
                 break;
@@ -243,6 +249,7 @@ void playerVsIa(Profil p, NIVEAU lvl)
             else if (drawGame(grid, col))
             {
                 printf("\n Match NULL, Aucun gagnant !!! \n");
+                sprintf(message_victoire, " Match NULL, Aucun gagnant !!! ");
                 utils_pause_to_continue();
                 flush_stdin_buffer();
                 break;
@@ -271,6 +278,7 @@ void playerVsIa(Profil p, NIVEAU lvl)
             if (winPosition(grid, line, col, 'O'))
             {
                 printf("\nVous avez perdu !\n");
+                sprintf(message_victoire, "Vous avez perdu !");
                 utils_pause_to_continue();
                 flush_stdin_buffer();
                 break;
@@ -278,6 +286,7 @@ void playerVsIa(Profil p, NIVEAU lvl)
             else if (drawGame(grid, col))
             {
                 printf("\n Match NULL, Aucun gagnant !!! \n");
+                sprintf(message_victoire, " Match NULL, Aucun gagnant !!! ");
                 utils_pause_to_continue();
                 flush_stdin_buffer();
                 break;
@@ -289,7 +298,7 @@ void playerVsIa(Profil p, NIVEAU lvl)
     time_t end_game = time(NULL);
     long score_time = end_game - start_game;
     // Sauvegarde l'ensemble des coups joues dans le fichier de configuration du profil
-    saveIntoFile(saves, p, pseudo_adv, score_time);
+    saveIntoFile(saves, p, pseudo_adv, score_time, message_victoire);
     freeGrid(grid, line);
 }
 

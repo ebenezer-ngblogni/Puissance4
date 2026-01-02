@@ -32,7 +32,7 @@ void getCoup(int isPlayer, int coup, Save **saves){
 // Ajout de la date et de l'heure de la partie, du pseudo de l'adversaire, et du temps total de la partie
 
 
-void saveIntoFile(Save *saves, Profil p, char *pseudo_adv, long score_time) {
+void saveIntoFile(Save *saves, Profil p, char *pseudo_adv, long score_time, char *message_victoire) {
     char nom_fichier[256];
     sprintf(nom_fichier, "files/%s.config.txt", p.pseudo);
 
@@ -76,14 +76,17 @@ void saveIntoFile(Save *saves, Profil p, char *pseudo_adv, long score_time) {
                 saves->coup);
         saves = saves->next;
     }
+
+    // Ecriture du message de victoire et du temps total de la partie
     fprintf(f, "%d %ld\n", 2, score_time);
+    fprintf(f, "%s\n", message_victoire);
 
     fclose(f);
 }
 
 // Affichage coup par coup d'une partie sauvegardée à partir d'un tableau temporaire
 // Apres affichage, liberation de la grille
-void newGrid(int table[][2],char *message, int nbre_coups,int line, int col, Profil p){
+void newGrid(int table[][2],char *message, int nbre_coups,int line, int col, Profil p, char *message_victoire){
     char **grid = createGrid(line, col);
     int i, j= nbre_coups-1;
     utils_clear_screen();
@@ -95,6 +98,7 @@ void newGrid(int table[][2],char *message, int nbre_coups,int line, int col, Pro
         showGrid(grid, line, col);
         printf("\n\n");
     }
+    printf("\n%s\n", message_victoire);
     printf("\n Duree de la partie: %ld secondes\n", (long)table[nbre_coups-1][1]);
     freeGrid(grid, line);
 }
@@ -106,6 +110,7 @@ void loadGame(Profil p){
     char nom_fichier[256];
     char line[256];
     char message[256];
+    char message_victoire[256];
     int nb_parties = 0;
     int choice, index_choice=0, index=0, table[100][2];
     int nb_coups = 0;
@@ -180,7 +185,9 @@ void loadGame(Profil p){
                 table[nb_coups][0] = score;
                 table[nb_coups][1] = score_time;
                 nb_coups++;
+            
             }else {
+                strcpy(message_victoire, line);
                 // condition d'arrêt : nouvelle partie ou fin de fichier
                 break;
             }
@@ -188,7 +195,7 @@ void loadGame(Profil p){
     }
     fclose(f);
 
-    newGrid(table, message, nb_coups, p.grille_lignes, p.grille_cols,p);
+    newGrid(table, message, nb_coups, p.grille_lignes, p.grille_cols,p , message_victoire);
     utils_pause_to_continue();
     return;
 }

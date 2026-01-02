@@ -2,9 +2,6 @@
 #define DISPLAY_H_INCLUDED
 #include "utils.h"
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
 
 //Creation de la grille de jeu
 char **createGrid(int line, int col);

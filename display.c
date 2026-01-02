@@ -121,7 +121,7 @@ void rulesGame(){
     printf("\t   - Le joueur courant saisit le pseudo du second joueur avant de commencer la partie.\n");
     printf("\t   - Le joueur 1 utilise le symbole \033[1;34mX\033[0m.\n");
     printf("\t   - Le joueur 2 utilise le symbole \033[1;31mO\033[0m.\n");
-    printf("\t   - Les joueurs disposent chacun de %d secondes (temps par defaut) pour jouer leur coup.\n", TIMER_PLAY);
+    printf("\t   - Les joueurs disposent chacun de %d secondes (temps par defaut) pour jouer leur coup.\n\n", TIMER_PLAY);
 
     printf("2. Mode Joueur vs IA : Un joueur humain affronte l'IA(joueur machine)de niveau Facile ou Moyen:\n");
     printf("\t   - Le joueur courant utilise le symbole \033[1;34mX\033[0m.\n");
@@ -133,7 +133,7 @@ void rulesGame(){
     printf("\n\t\033[1;31mOPTIONS SUPPLEMENTAIRES :\033[0m\n");
     printf("1. Le joueur courant peut interrompre la partie en cours à tout moment en appuyant '\033[1;31mq\033[0m' sur le clavier pour quitter.\n");
     printf("2. Sauvegarde de Partie : À la fin de chaque partie, les informations de la partie(coups des joueurs et durée totale) \n sont sauvegardées dans le fichier de configuration du profil du joueur courant.\n");
-    printf("3. Chargement de Partie : Les joueurs peuvent charger et reprendre des parties interrompues à partir de leur profil.\n");
+    printf("3. Chargement de Partie : Les joueurs peuvent charger et reprendre des parties interrompues à partir de leur profil.\n\n");
 
     printf("4. Une fois connecté, on peut:\n");
     printf("\t   - Modifier ses paramètres de configurations(taille de la grille, temps par coup).\n");
