@@ -51,7 +51,8 @@ void application_start() {
                     playerVsIa(profil_actuel, MOYEN);
                     break;
                 case 2:
-                    profile_modify_settings(&profil_actuel);
+                    // profile_modify_settings(&profil_actuel);
+                    twoPlayer(profil_actuel);
                     break;
                 case 3:
                     printf("\n-> Affichage de 'Historique'...\n(Bientot disponible !)");

@@ -5,8 +5,8 @@
 
 #ifdef _WIN32
 #include <conio.h>
-/* Fonction Booleenne permettant de lire la valeur entree au clavier et 
-la mettre dans la variable "coup" uniquement dans un delai bref defini par la constante "TIMER_PLAY"*/ 
+/* Fonction Booleenne permettant de lire la valeur entree au clavier et
+la mettre dans la variable "coup" uniquement dans un delai bref defini par la constante "TIMER_PLAY"*/
 int waitToPlay(int *coup, int delay){
     time_t debut = time(NULL);
     while (time(NULL) - debut < delay) {
@@ -39,7 +39,7 @@ int waitToPlay(int *coup, int delay) {
         scanf("%d", coup);
         return 1;
     }
-    Sleep(5);
+    //Sleep(5);
     return 0;
 }
 #endif
@@ -77,7 +77,7 @@ void twoPlayer(Profil p)
             if (coup < 1 || coup > col){
                 printf("\n Coup invalide\n");
                 isPlayer1 = isPlayer1 ? 0 : 1;
-                
+
             }
             // Si la colonne est pleine
             else if (grid[0][coup - 1] != ' '){
@@ -225,7 +225,7 @@ void IAEasy(Profil p, char **grid)
 {
     int line = p.grille_lignes, col = p.grille_cols, coup;
     struct timespec t = {1, 500}; // 1 sec et 500 nanosecondes
-    
+
 
     // Choix du coup
     srand(time(NULL));
@@ -365,7 +365,7 @@ int winPosition(char **grid, int line, int col, char symbole)
 }
 
 char **dismissShot(char **grid, int line,  int coup){
-    
+
     for(int i = 0; i < line; i++){
         if (grid[i][coup-1] != ' '){
             grid[i][coup-1] = ' ';
