@@ -3,11 +3,11 @@
 
 int main()
 {
-    if(IS_WIN){
         // Configurer la console Windows pour utiliser l'encodage UTF-8
+    #ifdef _WIN32
         SetConsoleOutputCP(CP_UTF8);
         SetConsoleCP(CP_UTF8);
-    }
+    #endif
 
     application_start();
 
