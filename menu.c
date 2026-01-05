@@ -2,11 +2,12 @@
 #include "profil.h"
 #include "display.h"
 #include "gameplay.h"
+#include "file.h"
 
 
 void application_start() {
 
-    // Initialisation
+    // Initialisation du dossier "files/"
     profile_initialize_directory();
 
     Profil profil_actuel;
@@ -25,40 +26,54 @@ void application_start() {
         while (utilisateur_connecte) {
 
             utils_clear_screen();
-            printf("=== MENU PRINCIPAL ===\n");
+            printf("=== MENU PRINCIPAL ===\n\n");
             printf("Utilisateur : %s\n", profil_actuel.pseudo);
-            printf("----------------------\n");
+            printf("-------------------------------------------\n");
             printf(" Reglages : %dx%d | %.1fs | Mode: %s\n",
                    profil_actuel.grille_lignes, profil_actuel.grille_cols,
                    profil_actuel.temps_par_coup,
-                   (profil_actuel.mode_par_defaut == 1 ? "PvP" : "PvIA"));
-            printf("----------------------\n");
+                   (profil_actuel.mode_jeu == 1 ? "PvP" : "PvIA"));
+            printf("------------------------------------------\n\n");
 
             printf(" 1. Nouvelle Partie\n");
             printf(" 2. Modifier les Parametres\n");
             printf(" 3. Consulter l'historique des parties\n");
             printf(" 4. Reprendre une partie\n");
             printf(" 5. Changer d'utilisateur\n");
-            printf(" 6. Quitter\n");
+            printf(" 6. Regles du jeu\n");
+            printf(" 7. Quitter\n");
             printf("\nVotre choix : ");
 
             choix_menu = utils_get_int();
 
             switch (choix_menu) {
-                case 1:
-                    printf("\n-> Lancement de 'Nouvelle Partie'...\n");
-                    // twoPlayer(profil_actuel);
-                    playerVsIa(profil_actuel, MOYEN);
+                case 1: // Nouvelle Partie
+                    printf(" 1. Joueur contre Joueur\n");
+                    printf(" 2. Joueur contre IA\n");
+                    printf("\nVotre choix : ");
+                    int mode_jeu = utils_get_int();
+                    if (mode_jeu == 1){
+                        twoPlayer(profil_actuel); // Lancer une partie PvP(joueur contre joueur)
+                    }  
+                    else if (mode_jeu == 2){
+                        printf(" 1- Facile\n");
+                        printf(" 2- Moyen\n");
+                        int niveau_ia = utils_get_int();
+                        if (niveau_ia == 1)
+                            playerVsIa(profil_actuel, FACILE); // Lancer une partie PvIA(joueur contre IA, niveau facile)
+                        else if (niveau_ia == 2)
+                            playerVsIa(profil_actuel, MOYEN); // Lancer une partie PvIA(joueur contre IA, niveau moyen)
+                        else
+                            printf("\n-> Choix invalide. Retour au menu principal.\n");
+                    } 
                     break;
-                case 2:
-                    // profile_modify_settings(&profil_actuel);
-                    twoPlayer(profil_actuel);
+                case 2: // Modifier les parametres
+                    profile_modify_settings(&profil_actuel);
                     break;
                 case 3:
-                    printf("\n-> Affichage de 'Historique'...\n(Bientot disponible !)");
-                    utils_pause_to_continue();
+                    loadGame(profil_actuel);
                     break;
-                case 4:
+                case 4: // Reprendre une partie
                     printf("\n-> Chargement de 'Reprendre partie'...\n(Bientot disponible !)");
                     utils_pause_to_continue();
                     break;
@@ -66,7 +81,12 @@ void application_start() {
                     utilisateur_connecte = 0;
                     printf("\nDeconnexion...\n");
                     break;
-                case 6: // Quitter
+                case 6: // Regles du jeu
+                    rulesGame();
+                    utils_pause_to_continue();
+                    break;
+
+                case 7: // Quitter
                     utilisateur_connecte = 0;
                     programme_actif = 0;
                     break;
@@ -80,5 +100,8 @@ void application_start() {
 
     // Fin du programme
     utils_clear_screen();
-    printf("\nMerci d'avoir joue ! A bientot.\n");
+    printf("================================================\n");
+    printf("\nMerci d'avoir joue %s A bientot.\n",profil_actuel.pseudo);
+    printf("================================================\n");
+
 }

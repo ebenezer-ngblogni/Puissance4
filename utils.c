@@ -23,30 +23,30 @@ void flush_stdin_buffer() {
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
-
+// Lit un entier de manière sécurisée
 int utils_get_int() {
-    int choix = 0;
+    int choice = 0;
 
     // On utilise " %d" (avec un espace) pour ignorer les 'Entrée'
     // ou espaces précédents, mais ce n'est pas parfait.
-    if (scanf("%d", &choix) != 1) {
-        choix = -1; // Renvoyer une valeur invalide
+    if (scanf("%d", &choice) != 1) {
+        choice = -1; // Renvoyer une valeur invalide
     }
     flush_stdin_buffer();
 
-    return choix;
+    return choice;
 }
 
 
 float utils_get_float() {
-    float choix = 0.0;
+    float choice = 0.0;
 
-    if (scanf("%f", &choix) != 1) {
-        choix = -1.0;
+    if (scanf("%f", &choice) != 1) {
+        choice = -1.0;
     }
     flush_stdin_buffer();
 
-    return choix;
+    return choice;
 }
 
 

@@ -29,31 +29,85 @@ int profile_validate_pseudo(char* pseudo) {
     return 1;
 }
 
-
+// Sauvegarde le profil dans un fichier txt du dossier "files/ sous le nom "<pseudo>.config.txt"
 void profile_save(Profil * p) {
     char nom_fichier[256];
+    char buffer[256];
+    int nb_lignes = 0;
 
+
+    // Construction du nom du fichier
     sprintf(nom_fichier, "files/%s.config.txt", p->pseudo);
 
-    FILE * f = fopen(nom_fichier, "w");
+    FILE * f = fopen(nom_fichier, "r");
 
+    // Si le fichier n'existe pas, on le crée et on écrit directement les données
     if (f == NULL) {
-        printf("Erreur: Impossible d'ouvrir/creer le fichier de profil. Verifiez que le dossier 'files' existe.\n");
-        return;
-    }
-
-    fprintf(f, "%s %d %d %f %d %d",
+        //printf("Erreur: Impossible d'ouvrir/creer le fichier de profil. Verifiez que le dossier 'files' existe.\n");
+        f = fopen(nom_fichier, "w");
+        fprintf(f, "%s %d %d %.2f %d %d\n",
             p->pseudo,
-            p->grille_cols,
             p->grille_lignes,
+            p->grille_cols,
             p->temps_par_coup,
             p->forme_pions,
-            p->mode_par_defaut);
+            p->mode_jeu);
+        fclose(f);
+        return;
+    }
+    
+    // Compte le nombre de lignes dans le fichier
+    // Si plus d'une ligne, on cree un fichier temporaire pour les modifications 
+    // et on remplace l'ancien fichier par le nouveau une fois les modifications faites.
+    // Sinon, on ecrase directement le fichier existant
+    while (fgets(buffer, sizeof(buffer), f)) {
+        nb_lignes++;
+        if (nb_lignes > 1) {
+            break;
+        }
+    }
+    rewind(f);
 
-    fclose(f);
+    if (nb_lignes > 1) {
+        FILE *tmp = fopen("temp.txt", "w");
+        int found = 1;
+
+        
+        while(fgets(buffer, sizeof(buffer), f)) {
+            if(found){
+                fprintf(tmp, "%s %d %d %.2f %d %d\n",
+                    p->pseudo,
+                    p->grille_lignes,
+                    p->grille_cols,
+                    p->temps_par_coup,
+                    p->forme_pions,
+                    p->mode_jeu);
+                found = 0;
+            }
+            else{
+                fputs(buffer, tmp);
+            }
+        }
+        fclose(f);
+        fclose(tmp);
+        remove(nom_fichier);
+        rename("temp.txt", nom_fichier);
+    } else {
+        f = fopen(nom_fichier, "w");
+        fprintf(f, "%s %d %d %.2f %d %d\n",
+            p->pseudo,
+            p->grille_lignes,
+            p->grille_cols,
+            p->temps_par_coup,
+            p->forme_pions,
+            p->mode_jeu);
+        fclose(f);
+    }
+
+   
 }
 
-
+// Charge le profil depuis un fichier txt du dossier "files/" sous le nom "<pseudo>.config.txt"
 Profil profile_load(char* pseudo) {
     Profil p;
 
@@ -69,13 +123,14 @@ Profil profile_load(char* pseudo) {
         return p;
     }
 
+    
     if (fscanf(f, "%s %d %d %f %d %d",
                p.pseudo,
-               &p.grille_cols,
                &p.grille_lignes,
+               &p.grille_cols,
                &p.temps_par_coup,
                &p.forme_pions,
-               &p.mode_par_defaut) == 6)
+               &p.mode_jeu) == 6)
     {
 
     }
@@ -88,7 +143,7 @@ Profil profile_load(char* pseudo) {
     return p;
 }
 
-
+// Crée un profil par défaut avec les paramètres standards
 Profil profile_create_default(char* pseudo) {
 
     Profil p;
@@ -99,14 +154,14 @@ Profil profile_create_default(char* pseudo) {
     p.grille_lignes = MIN_LINE;
     p.temps_par_coup = TIMER_PLAY;
     p.forme_pions = 1;
-    p.mode_par_defaut = 1;
+    p.mode_jeu = 1;
 
     profile_save(&p);
 
     return p;
 }
 
-
+// Gère la connexion ou la création de profil du joueur à l'aide de son pseudo
 Profil profile_login_or_create() {
     Profil profil_actif;
     char pseudo_saisi[50];
@@ -133,46 +188,48 @@ Profil profile_login_or_create() {
             printf("-> Bienvenue, %s ! Creation de votre profil par defaut...\n", pseudo_saisi);
             profil_actif = profile_create_default(pseudo_saisi);
         }
-
+        // Pause avant de continuer
         utils_pause_to_continue();
         break;
     }
     return profil_actif;
 }
 
+// Modifie les paramètres du profil actif
 void profile_modify_settings(Profil* p) {
-    int choix = 0;
+    int choice = 0;
     do {
         utils_clear_screen();
         printf("=== PARAMETRES (Profil: %s) ===\n", p->pseudo);
         printf(" 1. Modifier la Grille (Actuel: %dx%d)\n", p->grille_lignes, p->grille_cols);
         printf(" 2. Modifier le Temps/coup (Actuel: %.1fs)\n", p->temps_par_coup);
         printf(" 3. Modifier la Forme des Pions (Actuel: %d)\n", p->forme_pions);
-        printf(" 4. Modifier le Mode par defaut (Actuel: %s)\n", (p->mode_par_defaut == 1 ? "PvP" : "PvIA"));
+        printf(" 4. Modifier le Mode par defaut (Actuel: %s)\n", (p->mode_jeu == 1 ? "PvP" : "PvIA"));
         printf(" 5. Retour au menu principal\n");
         printf("\nVotre choix : ");
 
-        choix = utils_get_int();
+        // Lecture du choix utilisateur
+        choice = utils_get_int();
 
-        switch (choix) {
-            case 1: // Grille
-                printf("\n--- Modification Grille (Min 4x4, Max 20x20) ---\n");
+        switch (choice) {
+            case 1: // taille de la Grille 
+                printf("\n--- Modification Grille (Min 6x7, Max 20x20) ---\n");
                 do {
                     printf("Nouvelle hauteur (lignes) : ");
                     p->grille_lignes = utils_get_int();
-                } while (p->grille_lignes < 4 || p->grille_lignes > 20);
+                } while (p->grille_lignes < MIN_LINE || p->grille_lignes > 20);
                 do {
                     printf("Nouvelle largeur (colonnes) : ");
                     p->grille_cols = utils_get_int();
-                } while (p->grille_cols < 4 || p->grille_cols > 20);
+                } while (p->grille_cols < MIN_COL || p->grille_cols > 20);
                 profile_save(p);
                 break;
-            case 2: // Temps
-                printf("\n--- Modification Temps (Min 5s, Max 60s) ---\n");
+            case 2: // Temps par coup
+                printf("\n--- Modification Temps (Min 15s, Max 30s) ---\n");
                 do {
                     printf("Nouveau temps par coup (en secondes) : ");
                     p->temps_par_coup = utils_get_float();
-                } while (p->temps_par_coup < 5.0 || p->temps_par_coup > 60.0);
+                } while (p->temps_par_coup < 15.0 || p->temps_par_coup > 30.0);
                 profile_save(p);
                 break;
             case 3: // Forme
@@ -187,8 +244,8 @@ void profile_modify_settings(Profil* p) {
                 printf("\n--- Modification Mode (1=PvP, 2=PvIA) ---\n");
                 do {
                     printf("Votre choix (1 ou 2) : ");
-                    p->mode_par_defaut = utils_get_int();
-                } while (p->mode_par_defaut < 1 || p->mode_par_defaut > 2);
+                    p->mode_jeu = utils_get_int();
+                } while (p->mode_jeu < 1 || p->mode_jeu > 2);
                 profile_save(p);
                 break;
             case 5: // Retour
@@ -199,5 +256,5 @@ void profile_modify_settings(Profil* p) {
                 utils_pause_to_continue();
                 break;
         }
-    } while (choix != 5);
+    } while (choice != 5);
 }
