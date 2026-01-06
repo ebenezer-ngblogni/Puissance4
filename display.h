@@ -6,7 +6,7 @@
 //Creation de la grille de jeu
 char **createGrid(int line, int col);
 // Fonction d'affichage de la matrice de jeu jeu
-void showGrid(char **grid,int line, int col);
+void showGrid(char **grid,int line, int col, int forme_pions);
 
 //fonction de liberation de la memoire
 void freeGrid(char **grid, int line);

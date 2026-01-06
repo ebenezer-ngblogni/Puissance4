@@ -18,7 +18,7 @@ void pauseToDisplay(){
 
 
 /* Fonction Booleenne permettant de lire la valeur entree au clavier et
-la mettre dans la variable "coup" uniquement dans un delai bref defini par la constante "TIMER_PLAY"
+la mettre dans la variable "coup" uniquement dans un delai bref defini par la variable p.temps_par_coup
 */
 int waitToPlay(int *coup, int delay){
     #ifdef _WIN32
@@ -71,7 +71,7 @@ void twoPlayer(Profil p)
       utils_get_secure_string(pseudo_adv, 50);
 
       char **grid = createGrid(line, col);
-      showGrid(grid, line, col);
+      showGrid(grid, line, col, p.forme_pions);
       printf("\n\n");
 
       Save *saves = NULL;
@@ -90,7 +90,7 @@ void twoPlayerCore(char **grid, int line, int col, Profil p, char *pseudo_adv, S
       printf("\n=== REPRISE DE LA PARTIE ===\n");
       printf("%s VS %s\n", p.pseudo, pseudo_adv);
       printf("C'est au tour de: %s\n\n", isPlayer1 ? p.pseudo : pseudo_adv);
-      showGrid(grid, line, col);
+      showGrid(grid, line, col, p.forme_pions);
       printf("\n\n");
       utils_pause_to_continue();
     }
@@ -114,14 +114,14 @@ void twoPlayerCore(char **grid, int line, int col, Profil p, char *pseudo_adv, S
                 long past_time = now - start_time;
 
                 // Si le joueur ne joue pas dans le temps imparti, son tour est passe
-                if (past_time > TIMER_PLAY) {
+                if (past_time > p.temps_par_coup) {
                     isPlayer1 = isPlayer1 ? 1 : 0;
                     break;
                 }
 
                 printf("\r %s entrez votre colonne (ou '0' pour pauser) (%d sec: %ld): ",
                         isPlayer1 ? p.pseudo : pseudo_adv,
-                        TIMER_PLAY, TIMER_PLAY - past_time);
+                        p.temps_par_coup, p.temps_par_coup - past_time);
                 fflush(stdout);
 
                 if (waitToPlay(&coup, 1)) {
@@ -179,7 +179,8 @@ void twoPlayerCore(char **grid, int line, int col, Profil p, char *pseudo_adv, S
         Si un joueur a gagne la partie (sinon si la personne n'a pas gagne),
         on le declare vainqueur (sinon "Match NULL") et retour au menu */
 
-        showGrid(wherePosition(grid, line, coup, isPlayer1), line, col);
+        showGrid(wherePosition(grid, line, coup, isPlayer1), line, col, p.forme_pions);
+
         printf("\n\n");
 
         if (winPosition(grid, line, col, isPlayer1 ? 'X' : 'O'))
@@ -221,7 +222,7 @@ void playerVsIa(Profil p, NIVEAU lvl)
       printf("\n %s bonne partie :-)\n", p.pseudo);
 
       char **grid = createGrid(line, col);
-      showGrid(grid, line, col);
+      showGrid(grid, line, col, p.forme_pions);
       printf("\n\n");
 
       Save *saves = NULL;
@@ -247,7 +248,7 @@ void playerVsIaCore(char **grid, int line, int col, Profil p, NIVEAU lvl, Save *
       printf("\n=== REPRISE DE LA PARTIE ===\n");
       printf("%s VS %s\n", p.pseudo, pseudo_adv);
       printf("C'est au tour de: %s\n\n", isPlayer1 ? p.pseudo : pseudo_adv);
-      showGrid(grid, line, col);
+      showGrid(grid, line, col, p.forme_pions);
       printf("\n\n");
       utils_pause_to_continue();
     }
@@ -305,7 +306,7 @@ void playerVsIaCore(char **grid, int line, int col, Profil p, NIVEAU lvl, Save *
                 system("clear");
             }
 
-            showGrid(wherePosition(grid, line, coup, isPlayer1), line, col);
+            showGrid(wherePosition(grid, line, coup, isPlayer1), line, col, p.forme_pions);
 
             if (winPosition(grid, line, col, isPlayer1 ? 'X' : 'O'))
             {
@@ -399,7 +400,7 @@ void IAEasy(Profil p, char **grid, Save **saves)
         system("clear");
     }
 
-    showGrid(wherePosition(grid, line, coup, 0), line, col);
+    showGrid(wherePosition(grid, line, coup, 0), line, col, p.forme_pions);
 
 }
 
@@ -430,7 +431,7 @@ void IAMedium(Profil p, char **grid, Save **saves)
         system("clear");
     }
 
-    showGrid(wherePosition(grid, line, coup, 0), line, col);
+    showGrid(wherePosition(grid, line, coup, 0), line, col, p.forme_pions);
 
 }
 

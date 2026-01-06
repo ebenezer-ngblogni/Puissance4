@@ -95,7 +95,7 @@ void newGrid(int table[][2],char *message, int nbre_coups,int line, int col, Pro
     printf("\n %s = \033[1;34mX\033[0m \n", p.pseudo);
     for(i = 0; i < j; i++){
         wherePosition(grid, line, table[i][1], table[i][0]);
-        showGrid(grid, line, col);
+        showGrid(grid, line, col, p.forme_pions);
         printf("\n\n");
     }
     printf("\n%s\n", message_victoire);

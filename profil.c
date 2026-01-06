@@ -240,7 +240,10 @@ void profile_modify_settings(Profil* p) {
                 profile_save(p);
                 break;
             case 3: // Forme
-                printf("\n--- Modification Pions (1, 2 ou 3) ---\n");
+                printf("\n--- Modification Forme des Pions ---\n");
+                printf(" 1. Style Lettres  : X et O\n");
+                printf(" 2. Style Coeurs    : ♥ et ♡\n");
+                printf(" 3. Style Etoiles   : ★ et ☆\n");
                 do {
                     printf("Votre choix (1, 2 ou 3) : ");
                     p->forme_pions = utils_get_int();

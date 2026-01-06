@@ -25,7 +25,7 @@ char **createGrid(int line, int col){
 
 
 // Fonction d'affichage de la matrice de jeu
-void showGrid(char **grid, int line, int col){
+void showGrid(char **grid, int line, int col, int forme_pions){
     int i,j,k;
 
     printf("\n \033[1;34mOXO--- PUISSANCE 4 ---OXO\033[0m \n\n");
@@ -51,14 +51,39 @@ void showGrid(char **grid, int line, int col){
             for(j =0; j< col; j++){
 
                 if (grid[i][j] == 'X') {
-                    printf("\033[1;34mX\033[0m");
-
-                } else if (grid[i][j] == 'O') {
-                    printf("\033[1;31mO\033[0m"); 
-                } else {
-                    printf("%c", grid[i][j]); 
+                // Affichage joueur 1 selon le style choisi
+                switch(forme_pions) {
+                    case 1:  // Style classique (X/O)
+                        printf("\033[1;34mX\033[0m");
+                        break;
+                    case 2:  // Style cœurs (♥/♡)
+                        printf("\033[1;31m♥\033[0m");  
+                        break;
+                    case 3:  // Style étoiles (★/☆)
+                        printf("\033[1;33m★\033[0m");  
+                        break;
+                    default:
+                        printf("\033[1;34mX\033[0m");
                 }
-        
+                } else if (grid[i][j] == 'O') {
+                    // Affichage joueur 2 selon le style choisi
+                    switch(forme_pions) {
+                        case 1:  // Style classique (X/O)
+                            printf("\033[1;31mO\033[0m");
+                            break;
+                        case 2:  // Style cœurs (♥/♡)
+                            printf("\033[1;34m♡\033[0m");  
+                            break;
+                        case 3:  // Style étoiles (★/☆)
+                            printf("\033[1;36m☆\033[0m");  
+                            break;
+                        default:
+                            printf("\033[1;31mO\033[0m");
+                    }
+                } else {
+                    printf("%c", grid[i][j]);
+                }
+
                 printf(" | ");
             }
             printf("\n");
