@@ -184,6 +184,13 @@ Profil profile_login_or_create() {
 
         if (profil_actif.pseudo[0] != '\0') {
             printf("-> Bon retour, %s !\n", profil_actif.pseudo);
+            // Vérifier si une partie en pause existe
+            char pause_file[256];
+            sprintf(pause_file, "files/%s.pause.txt", profil_actif.pseudo);
+            if (file_exists(pause_file)) {
+                printf("\n>>> ATTENTION: Vous avez une partie en pause !\n");
+                printf(">>> Allez a l'option 4 du menu pour la reprendre.\n\n");
+            }
         } else {
             printf("-> Bienvenue, %s ! Creation de votre profil par defaut...\n", pseudo_saisi);
             profil_actif = profile_create_default(pseudo_saisi);

@@ -49,5 +49,10 @@ int BestChoiceMedium(int line, int col, char **grid);
 // Supprime le dernier coup joué dans une colonne donnée
 char **dismissShot(char **grid, int line,  int coup);
 
+// Fonctions core internes (avec état complet)
+void twoPlayerCore(char **grid, int line, int col, Profil p, char *pseudo_adv, Save *saves, int joueur_actuel, long temps_deja_ecoule);
+
+void playerVsIaCore(char **grid, int line, int col, Profil p, NIVEAU lvl, Save *saves, int joueur_actuel, long temps_deja_ecoule);
+
 
 #endif // GAMEPLAY_H_INCLUDED

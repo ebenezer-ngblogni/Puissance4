@@ -55,3 +55,39 @@ void utils_pause_to_continue() {
     char temp[10];
     utils_get_secure_string(temp, 10);
 }
+
+// Vérifier si un fichier existe
+int file_exists(const char *filename) {
+    FILE *f = fopen(filename, "r");
+    if (f != NULL) {
+        fclose(f);
+        return 1;
+    }
+    return 0;
+}
+
+// Sérialiser la grille en une chaîne (allocation dynamique)
+char* serialize_grid(char **grid, int line, int col) {
+    int size = line * col;
+    char *serialized = malloc((size + 1) * sizeof(char));
+    if (!serialized) 
+        return NULL;
+    int index = 0;
+    for (int i = 0; i < line; i++) {
+        for (int j = 0; j < col; j++) {
+            serialized[index++] = grid[i][j];
+        }
+    }
+    serialized[index] = '\0';
+    return serialized;
+}
+
+// Désérialiser une chaîne vers la grille
+void deserialize_grid(char **grid, char *serialized, int line, int col) {
+    int index = 0;
+    for (int i = 0; i < line; i++) {
+        for (int j = 0; j < col; j++) {
+            grid[i][j] = serialized[index++];
+        }
+    }
+}

@@ -74,9 +74,11 @@ void application_start() {
                     loadGame(profil_actuel);
                     break;
                 case 4: // Reprendre une partie
-                    printf("\n-> Chargement de 'Reprendre partie'...\n(Bientot disponible !)");
-                    utils_pause_to_continue();
-                    break;
+                      if (!resumePausedGame(profil_actuel)) {
+                          printf("\n-> Aucune partie en pause pour %s.\n", profil_actuel.pseudo);
+                          utils_pause_to_continue();
+                      }
+                      break;
                 case 5: // Changer d'utilisateur
                     utilisateur_connecte = 0;
                     printf("\nDeconnexion...\n");

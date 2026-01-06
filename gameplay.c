@@ -60,40 +60,55 @@ A chaque tour, un joueur a un temps limité pour jouer son coup.
 A la fin de la partie, les informations de la partie sont sauvegardées dans le fichier de configuration du profil.
 Et la grille est liberée de la mémoire.
 */
+
 void twoPlayer(Profil p)
 {
+      int line = p.grille_lignes, col = p.grille_cols;
+      char pseudo_adv[50];
 
-    int line = p.grille_lignes, col = p.grille_cols;
-    int coup, valid = 0, isPlayer1 = 1, continu = 1;
-    char pseudo_adv[50];
+      printf("\n %s bonne partie :-)\n", p.pseudo);
+      printf("\n Entrer le pseudo de votre adversaire:\n");
+      utils_get_secure_string(pseudo_adv, 50);
+
+      char **grid = createGrid(line, col);
+      showGrid(grid, line, col);
+      printf("\n\n");
+
+      Save *saves = NULL;
+      twoPlayerCore(grid, line, col, p, pseudo_adv, saves, 1, 0);
+}
+
+void twoPlayerCore(char **grid, int line, int col, Profil p, char *pseudo_adv, Save *saves, int joueur_actuel, long temps_deja_ecoule)
+{
+
+    int coup, valid = 0, isPlayer1 = joueur_actuel, continu = 1;
     char message_victoire[256];
-
-    Save *saves = NULL;
     p.mode_jeu = 1;
 
 
-    printf("\n %s bonne partie :-)\n", p.pseudo);
-    printf("\n Entrer le pseudo de votre adversaire:\n");
-    //On lit de maniere securise la chaine contenant le pseudo en remplaçant le caractere '\n' par un '\0'
-    utils_get_secure_string(pseudo_adv, 50);
+    if (temps_deja_ecoule > 0) {
+      printf("\n=== REPRISE DE LA PARTIE ===\n");
+      printf("%s VS %s\n", p.pseudo, pseudo_adv);
+      printf("C'est au tour de: %s\n\n", isPlayer1 ? p.pseudo : pseudo_adv);
+      showGrid(grid, line, col);
+      printf("\n\n");
+      utils_pause_to_continue();
+    }
 
-    char **grid = createGrid(line, col);
-    showGrid(grid, line, col);
-    printf("\n\n");
+    time_t start_game = time(NULL) - temps_deja_ecoule;
 
-    time_t start_game = time(NULL);
     while (continu)
     {
         do
         {
             time_t start_time = time(NULL);
-            //coup = -1;
+            coup = -1;
 
             /*cette boucle affiche en continu le message avec un chrono decroissant
               l'utilisation du '\r' dans notre printf permet ainsi d'effacer la ligne precedente
               et de reecrire sur cette meme ligne
               le 'fflush(stdout)' Force l'affichage immédiat du message du "printf" */
-            coup = -1;
+
             while (1){
                 time_t now = time(NULL);
                 long past_time = now - start_time;
@@ -104,20 +119,34 @@ void twoPlayer(Profil p)
                     break;
                 }
 
-                printf("\r %s entrez votre colonne(vous avez %d secondes: %ld): ", isPlayer1 ? p.pseudo : pseudo_adv,
-                                                                                  TIMER_PLAY, TIMER_PLAY - past_time);
+                printf("\r %s entrez votre colonne (ou '0' pour pauser) (%d sec: %ld): ",
+                        isPlayer1 ? p.pseudo : pseudo_adv,
+                        TIMER_PLAY, TIMER_PLAY - past_time);
                 fflush(stdout);
 
                 if (waitToPlay(&coup, 1)) {
+                    // Vérifier si l'utilisateur veut mettre en pause
+                    if (coup == 0) {
+                        printf("\n\n=== MISE EN PAUSE ===\n");
+                        long temps_ecoule = time(NULL) - start_game;
+                        savePausedGame(grid, line, col, p, pseudo_adv, 0,
+                                    temps_ecoule, saves, isPlayer1);
+                        printf("Partie sauvegardee ! Vous pourrez la reprendre via le menu (option 4).\n");
+                        utils_pause_to_continue();
+                        freeGrid(grid, line);
+                        return;  // Quitter la fonction
+                    }
                     break;
                 }
             }
+
 
             // Validation du coup
             if ((coup < 1 || coup > col) && coup != -1){
                 printf("\n Coup invalide\n");
                 pauseToDisplay();
                 isPlayer1 = isPlayer1 ? 0 : 1;
+                valid = 0;
 
             }
             // Si la colonne est pleine
@@ -125,6 +154,7 @@ void twoPlayer(Profil p)
                 printf("\n Cette colonne est pleine. Jouez ailleurs!\n");
                 pauseToDisplay();
                 isPlayer1 = isPlayer1 ? 0 : 1;
+                valid = 0;
             } else{
                 valid = 1;
                 //Enregistrer le coup dans la liste des sauvegardes
@@ -170,6 +200,7 @@ void twoPlayer(Profil p)
         }
 
         isPlayer1 = isPlayer1 ? 0 : 1;
+        valid = 0;
     }
 
     time_t end_game = time(NULL);
@@ -185,46 +216,85 @@ et le niveau de l'IA (facile, moyen, difficile).
 */
 void playerVsIa(Profil p, NIVEAU lvl)
 {
+      int line = p.grille_lignes, col = p.grille_cols;
 
-    int line = p.grille_lignes, col = p.grille_cols;
-    int coup, isPlayer1 = 1, continu = 1, valid = 0;
+      printf("\n %s bonne partie :-)\n", p.pseudo);
+
+      char **grid = createGrid(line, col);
+      showGrid(grid, line, col);
+      printf("\n\n");
+
+      Save *saves = NULL;
+      playerVsIaCore(grid, line, col, p, lvl, saves, 1, 0);
+}
+
+void playerVsIaCore(char **grid, int line, int col, Profil p, NIVEAU lvl, Save *saves, int joueur_actuel, long temps_deja_ecoule)
+{
+
+    int coup, isPlayer1 = joueur_actuel, continu = 1, valid = 0;
     char message_victoire[256];
-    Save *saves = NULL;
     p.mode_jeu = 0;
 
-    printf("\n %s bonne partie :-)\n", p.pseudo);
+    time_t start_game = time(NULL) - temps_deja_ecoule;
+    char pseudo_adv[50];
+    if (lvl == FACILE) {
+        strcpy(pseudo_adv, "IA - FACILE");
+    } else {
+        strcpy(pseudo_adv, "IA - MOYEN");
+    }
 
-    char **grid = createGrid(line, col);
-    showGrid(grid, line, col);
+    if (temps_deja_ecoule > 0) {
+      printf("\n=== REPRISE DE LA PARTIE ===\n");
+      printf("%s VS %s\n", p.pseudo, pseudo_adv);
+      printf("C'est au tour de: %s\n\n", isPlayer1 ? p.pseudo : pseudo_adv);
+      showGrid(grid, line, col);
+      printf("\n\n");
+      utils_pause_to_continue();
+    }
 
-    time_t start_game = time(NULL);
-    char pseudo_adv[50] = "IA";
 
     while (continu)
     {
         if (isPlayer1)
-        {
+          {
 
-            do
-            {
-                printf("\n %s entrez votre colonne : ", p.pseudo);
-                scanf("%d", &coup);
-                if (coup < 1 || coup > col)
-                {
-                    printf("\n Coup invalide\n");
-                }
-                else if (grid[0][coup - 1] != ' ')
-                {
-                    printf("\n Cette colonne est pleine. Jouez ailleurs!\n");
-                    pauseToDisplay();
-                    isPlayer1 = isPlayer1 ? 0 : 1;
+              do
+              {
+                  printf("\n %s entrez votre colonne (ou '0' pour pauser) : ", p.pseudo);
 
-                }else{
-                    valid = 1;
-                    // Enregistrer le coup dans la liste des sauvegardes
-                    getCoup(isPlayer1, coup, &saves);
-            }
-            } while (!valid);
+                  char input[20];
+                  fgets(input, sizeof(input), stdin);
+
+                  // Vérifier si pause demandée
+                  if (input[0] == '0' || input[0] == 'P' || input[0] == 'p') {
+                      printf("\n\n=== MISE EN PAUSE ===\n");
+                      long temps_ecoule = time(NULL) - start_game;
+                      savePausedGame(grid, line, col, p, pseudo_adv, lvl,
+                                    temps_ecoule, saves, isPlayer1);
+                      printf("Partie sauvegardee ! Vous pourrez la reprendre via le menu (option 4).\n");
+                      utils_pause_to_continue();
+                      freeGrid(grid, line);
+                      return;
+                  }
+
+                  coup = atoi(input);
+
+                  if (coup < 1 || coup > col)
+                  {
+                      printf("\n Coup invalide\n");
+                      valid = 0;
+                  }
+                  else if (grid[0][coup - 1] != ' ')
+                  {
+                      printf("\n Cette colonne est pleine. Jouez ailleurs!\n");
+                      pauseToDisplay();
+                      valid = 0;
+                  }else{
+                      valid = 1;
+                      // Enregistrer le coup dans la liste des sauvegardes
+                      getCoup(isPlayer1, coup, &saves);
+                  }
+              } while (!valid);
 
             if (IS_WIN)
             {
@@ -263,12 +333,10 @@ void playerVsIa(Profil p, NIVEAU lvl)
             {
             case FACILE:
                 IAEasy(p, grid, &saves);
-                strcpy(pseudo_adv, "IA - FACILE");
                 break;
 
             case MOYEN:
                 IAMedium(p, grid, &saves);
-                strcpy(pseudo_adv, "IA - MOYEN");
                 break;
 
             default:
@@ -293,6 +361,7 @@ void playerVsIa(Profil p, NIVEAU lvl)
             }
             isPlayer1 = isPlayer1 ? 0 : 1;
         }
+        valid = 0;
     }
 
     time_t end_game = time(NULL);
@@ -467,3 +536,4 @@ char **dismissShot(char **grid, int line,  int coup){
     }
     return grid;
 }
+

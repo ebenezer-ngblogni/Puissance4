@@ -199,3 +199,189 @@ void loadGame(Profil p){
     utils_pause_to_continue();
     return;
 }
+
+// Sauvegarder une partie en pause dans <pseudo>.pause.txt
+void savePausedGame(char **grid, int ligne, int col, Profil p,
+                    char *pseudo_adv, int niveau_ia, long temps_ecoule,
+                    Save *saves, int joueur_actuel) {
+    char nom_fichier[256];
+    sprintf(nom_fichier, "files/%s.pause.txt", p.pseudo);
+
+    FILE *f = fopen(nom_fichier, "w");  // Overwrite (une seule partie en pause)
+    if (f == NULL) {
+        printf("Erreur: Impossible de sauvegarder la partie en pause.\n");
+        return;
+    }
+
+    // Marqueur de partie en pause
+    fprintf(f, "PAUSE_GAME\n");
+
+    // Profil du joueur
+    fprintf(f, "%s %d %d %f %d %d\n",
+            p.pseudo, ligne, col, p.temps_par_coup, p.forme_pions, p.mode_jeu);
+
+    // Infos de la partie : adversaire, temps écoulé, joueur actuel
+    if (p.mode_jeu == 1) {
+        fprintf(f, "%s %ld %d\n", pseudo_adv, temps_ecoule, joueur_actuel);
+    } else {
+        // Mode IA : stocker niveau
+        char niveau_str[20];
+        sprintf(niveau_str, "IA-%s", niveau_ia == 1 ? "FACILE" : "MOYEN");
+        fprintf(f, "%s %ld %d\n", niveau_str, temps_ecoule, joueur_actuel);
+    }
+
+    // On sérialise et on écrit la grille
+    char *grille_serialisee = serialize_grid(grid, ligne, col);
+    if (grille_serialisee) {
+        fprintf(f, "%s\n", grille_serialisee);
+        free(grille_serialisee);
+    }
+
+    // Écriture de  tous les coups
+    Save *current = saves;
+    while (current != NULL) {
+        fprintf(f, "%d %d\n", current->player, current->coup);
+        current = current->next;
+    }
+
+    // Marqueur de fin
+    fprintf(f, "END_PAUSE\n");
+
+    fclose(f);
+}
+
+// Chargement de l'état d'une partie en pause
+PausedGame* loadPausedGameState(Profil p) {
+    char nom_fichier[256];
+    sprintf(nom_fichier, "files/%s.pause.txt", p.pseudo);
+
+    if (!file_exists(nom_fichier)) {
+        return NULL;
+    }
+
+    FILE *f = fopen(nom_fichier, "r");
+    if (f == NULL) return NULL;
+
+    PausedGame *pg = malloc(sizeof(PausedGame));
+    if (!pg) {
+        fclose(f);
+        return NULL;
+    }
+
+    char line[512]; 
+
+    // Lecture du marqueur PAUSE_GAME
+    if (!fgets(line, sizeof(line), f) || strncmp(line, "PAUSE_GAME", 10) != 0) {
+        fclose(f);
+        free(pg);
+        return NULL;
+    }
+
+    // Lecture du profil avec fgets au lieu de fscanf
+    if (fgets(line, sizeof(line), f)) {
+        sscanf(line, "%s %d %d %f %d %d",
+                pg->pseudo, &pg->grille_lignes, &pg->grille_cols,
+                &pg->temps_par_coup, &pg->forme_pions, &pg->mode_jeu);
+    }
+
+    // Lecture de adversaire/niveau, temps écoulé, joueur actuel
+    if (fgets(line, sizeof(line), f)) {
+        sscanf(line, "%s %ld %d", pg->adversaire, &pg->temps_ecoule, &pg->joueur_actuel);
+    }
+
+    // Déterminer le niveau IA si mode PvIA
+    if (pg->mode_jeu == 0) {
+        if (strstr(pg->adversaire, "FACILE")) {
+            pg->niveau_ia = 1;
+        } else if (strstr(pg->adversaire, "MOYEN")) {
+            pg->niveau_ia = 2;
+        }
+    } else {
+        pg->niveau_ia = 0;
+    }
+
+    // Lecture de la grille sérialisée
+    if (fgets(line, sizeof(line), f)) {
+        line[strcspn(line, "\n")] = '\0';  // Supprimer le \n
+        pg->grille_serialisee = malloc(strlen(line) + 1);
+        if (pg->grille_serialisee) {
+            strcpy(pg->grille_serialisee, line);
+        }
+    }
+
+    // Lecture des les coups et reconstruire la liste chaînée
+    pg->saves = NULL;
+    int player, coup;
+    while (fgets(line, sizeof(line), f)) {
+        if (strncmp(line, "END_PAUSE", 9) == 0) break;
+
+        if (sscanf(line, "%d %d", &player, &coup) == 2) {
+            getCoup(player, coup, &pg->saves);
+        }
+    }
+
+    fclose(f);
+    return pg;
+}
+
+// Libérer la mémoire d'une PausedGame
+void freePausedGame(PausedGame *pg) {
+    if (!pg) return;
+
+    if (pg->grille_serialisee) {
+        free(pg->grille_serialisee);
+    }
+
+    // Libérer la liste chaînée des coups
+    Save *current = pg->saves;
+    while (current != NULL) {
+        Save *temp = current;
+        current = current->next;
+        free(temp);
+    }
+
+    free(pg);
+}
+
+// Reprendre une partie en pause
+int resumePausedGame(Profil p) {
+    PausedGame *pg = loadPausedGameState(p);
+    if (!pg) {
+        return 0;  // Aucune partie en pause
+    }
+
+    printf("\n=== CHARGEMENT DE LA PARTIE EN PAUSE ===\n");
+    printf("Adversaire: %s\n", pg->adversaire);
+    printf("Temps ecoule: %ld secondes\n", pg->temps_ecoule);
+    printf("Tour de: %s\n\n", pg->joueur_actuel == 1 ? p.pseudo : pg->adversaire);
+
+    // Recréer la grille
+    char **grid = createGrid(pg->grille_lignes, pg->grille_cols);
+    deserialize_grid(grid, pg->grille_serialisee, pg->grille_lignes, pg->grille_cols);
+
+    // Suppression du fichier .pause.txt AVANT de relancer (pour éviter double sauvegarde)
+    char nom_fichier[256];
+    sprintf(nom_fichier, "files/%s.pause.txt", p.pseudo);
+    remove(nom_fichier);
+
+    // Restauration des paramètres du profil depuis la sauvegarde
+    p.grille_lignes = pg->grille_lignes;
+    p.grille_cols = pg->grille_cols;
+    p.temps_par_coup = pg->temps_par_coup;
+    p.forme_pions = pg->forme_pions;
+    p.mode_jeu = pg->mode_jeu;
+
+    // On relance la partie selon le mode
+    if (pg->mode_jeu == 1) {
+        twoPlayerCore(grid, pg->grille_lignes, pg->grille_cols, p, pg->adversaire, pg->saves, pg->joueur_actuel, pg->temps_ecoule);
+    } else {
+        NIVEAU lvl = (pg->niveau_ia == 1) ? FACILE : MOYEN;
+        playerVsIaCore(grid, pg->grille_lignes, pg->grille_cols, p, lvl, pg->saves, pg->joueur_actuel, pg->temps_ecoule);
+    }
+
+
+    freePausedGame(pg);
+
+    return 1;
+}
+
