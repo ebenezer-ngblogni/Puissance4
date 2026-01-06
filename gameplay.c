@@ -112,16 +112,16 @@ void twoPlayerCore(char **grid, int line, int col, Profil p, char *pseudo_adv, S
             while (1){
                 time_t now = time(NULL);
                 long past_time = now - start_time;
-
+                long temps_par_coup = (long)p.temps_par_coup;
                 // Si le joueur ne joue pas dans le temps imparti, son tour est passe
                 if (past_time > p.temps_par_coup) {
                     isPlayer1 = isPlayer1 ? 1 : 0;
                     break;
                 }
 
-                printf("\r %s entrez votre colonne (ou '0' pour pauser) (%d sec: %ld): ",
+                printf("\r %s entrez votre colonne (ou '0' pour pauser) (%ld sec: %ld): ",
                         isPlayer1 ? p.pseudo : pseudo_adv,
-                        p.temps_par_coup, p.temps_par_coup - past_time);
+                        temps_par_coup, temps_par_coup - past_time);
                 fflush(stdout);
 
                 if (waitToPlay(&coup, 1)) {
@@ -145,7 +145,7 @@ void twoPlayerCore(char **grid, int line, int col, Profil p, char *pseudo_adv, S
             if ((coup < 1 || coup > col) && coup != -1){
                 printf("\n Coup invalide\n");
                 pauseToDisplay();
-                isPlayer1 = isPlayer1 ? 0 : 1;
+                isPlayer1 = isPlayer1 ? 1 : 0;
                 valid = 0;
 
             }
@@ -153,7 +153,7 @@ void twoPlayerCore(char **grid, int line, int col, Profil p, char *pseudo_adv, S
             else if ((grid[0][coup - 1] != ' ') && coup != -1){
                 printf("\n Cette colonne est pleine. Jouez ailleurs!\n");
                 pauseToDisplay();
-                isPlayer1 = isPlayer1 ? 0 : 1;
+                isPlayer1 = isPlayer1 ? 1 : 0;
                 valid = 0;
             } else{
                 valid = 1;

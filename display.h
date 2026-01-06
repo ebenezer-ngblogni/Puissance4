@@ -14,6 +14,7 @@ void freeGrid(char **grid, int line);
 //fonction de calcul de position d'un coup dans la grille
 char **wherePosition(char **grid, int line, int coup, int isPlayer1);
 
+//fonction d'affichage des regles du jeu
 void rulesGame();
 
 
