@@ -41,9 +41,7 @@ struct paused_game {
 typedef struct paused_game PausedGame;
 
 // Sauvegarder une partie en pause
-void savePausedGame(char **grid, int ligne, int col, Profil p,
-                    char *pseudo_adv, int niveau_ia, long temps_ecoule,
-                    Save *saves, int joueur_actuel);
+int savePausedGame(char **grid, int ligne, int col, Profil p, char *pseudo_adv, int niveau_ia, long temps_ecoule, Save *saves, int joueur_actuel);
 
 // Charger l'état d'une partie en pause (retourne NULL si aucune partie)
 PausedGame* loadPausedGameState(Profil p);

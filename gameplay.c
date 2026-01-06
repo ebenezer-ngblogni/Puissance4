@@ -129,13 +129,18 @@ void twoPlayerCore(char **grid, int line, int col, Profil p, char *pseudo_adv, S
                     if (coup == 0) {
                         printf("\n\n=== MISE EN PAUSE ===\n");
                         long temps_ecoule = time(NULL) - start_game;
-                        savePausedGame(grid, line, col, p, pseudo_adv, 0,
-                                    temps_ecoule, saves, isPlayer1);
+                        int saved = savePausedGame(grid, line, col, p, pseudo_adv, 0, temps_ecoule, saves, isPlayer1);
+
+                    if (saved) {
                         printf("Partie sauvegardee ! Vous pourrez la reprendre via le menu (option 4).\n");
                         utils_pause_to_continue();
                         freeGrid(grid, line);
-                        return;  // Quitter la fonction
+                        return;  // Quitter seulement si sauvegarde réussie
                     }
+                    // Sinon, la partie continue (break pour sortir de waitToPlay)
+                    break;
+                }
+
                     break;
                 }
             }
@@ -267,16 +272,20 @@ void playerVsIaCore(char **grid, int line, int col, Profil p, NIVEAU lvl, Save *
                   fgets(input, sizeof(input), stdin);
 
                   // Vérifier si pause demandée
-                  if (input[0] == '0' || input[0] == 'P' || input[0] == 'p') {
-                      printf("\n\n=== MISE EN PAUSE ===\n");
-                      long temps_ecoule = time(NULL) - start_game;
-                      savePausedGame(grid, line, col, p, pseudo_adv, lvl,
-                                    temps_ecoule, saves, isPlayer1);
-                      printf("Partie sauvegardee ! Vous pourrez la reprendre via le menu (option 4).\n");
-                      utils_pause_to_continue();
-                      freeGrid(grid, line);
-                      return;
-                  }
+                if (input[0] == '0' || input[0] == 'P' || input[0] == 'p') {
+                    printf("\n\n=== MISE EN PAUSE ===\n");
+                    long temps_ecoule = time(NULL) - start_game;
+                    int saved = savePausedGame(grid, line, col, p, pseudo_adv, lvl,
+                                                temps_ecoule, saves, isPlayer1);
+
+                    if (saved) {
+                        printf("Partie sauvegardee ! Vous pourrez la reprendre via le menu (option 4).\n");
+                        utils_pause_to_continue();
+                        freeGrid(grid, line);
+                        return;  // Quitter seulement si sauvegarde réussie
+                    }
+                    // Sinon, redemander le coup (continue dans le do-while)
+                }
 
                   coup = atoi(input);
 
