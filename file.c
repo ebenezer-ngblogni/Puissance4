@@ -201,16 +201,36 @@ void loadGame(Profil p){
 }
 
 // Sauvegarder une partie en pause dans <pseudo>.pause.txt
-void savePausedGame(char **grid, int ligne, int col, Profil p,
+int savePausedGame(char **grid, int ligne, int col, Profil p,
                     char *pseudo_adv, int niveau_ia, long temps_ecoule,
                     Save *saves, int joueur_actuel) {
     char nom_fichier[256];
     sprintf(nom_fichier, "files/%s.pause.txt", p.pseudo);
 
-    FILE *f = fopen(nom_fichier, "w");  // Overwrite (une seule partie en pause)
+    // Vérifier si une partie en pause existe déjà
+    if (file_exists(nom_fichier)) {
+        printf("\n\033[1;33m⚠ ATTENTION ⚠\033[0m\n");
+        printf("Vous avez deja une partie en pause.\n");
+        printf("Si vous continuez, l'ancienne partie en pause sera \033[1;31mECRASEE\033[0m.\n\n");
+        printf("Voulez-vous vraiment ecraser l'ancienne partie ? (O/N) : ");
+
+        char reponse[10];
+        utils_get_secure_string(reponse, 10);
+
+        // Si l'utilisateur refuse
+        if (reponse[0] != 'O' && reponse[0] != 'o') {
+            printf("\n-> Mise en pause annulee. La partie continue.\n");
+            utils_pause_to_continue();
+            return 0;  // Sauvegarde annulée
+        }
+
+        printf("\n-> Ancienne partie en pause ecrasee.\n");
+    }
+
+    FILE *f = fopen(nom_fichier, "w");
     if (f == NULL) {
         printf("Erreur: Impossible de sauvegarder la partie en pause.\n");
-        return;
+        return 0;  // Échec de sauvegarde
     }
 
     // Marqueur de partie en pause
@@ -248,6 +268,7 @@ void savePausedGame(char **grid, int ligne, int col, Profil p,
     fprintf(f, "END_PAUSE\n");
 
     fclose(f);
+    return 1;  // Sauvegarde réussie
 }
 
 // Chargement de l'état d'une partie en pause
