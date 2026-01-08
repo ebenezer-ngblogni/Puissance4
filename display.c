@@ -75,7 +75,7 @@ void showGrid(char **grid, int line, int col, int forme_pions){
                             printf("\033[1;31m♥\033[0m");  
                             break;
                         case 3:  // Style étoiles (★/☆)
-                            printf("\033[1;31m☆\033[0m");  
+                            printf("\033[1;31m★\033[0m");  
                             break;
                         default:
                             printf("\033[1;31mO\033[0m");
