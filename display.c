@@ -129,40 +129,39 @@ void rulesGame(){
 
     printf("\t\033[1;31mDESCRIPTION DU JEU :\033[0m\n");
 
-    printf("Le Puissance 4 est un jeu de stratégie pour deux joueurs, chacun ayant un symbole distinct (\033[1;34mX\033[0m et \033[1;31mO\033[0m).\n");
+    printf("Le Puissance 4 est un jeu de stratégie pour deux joueurs, chacun ayant un symbole distinct (\033[1;34mX\033[0m et \033[1;31mO\033[0m par defaut).\n");
     printf("1. Le jeu se joue sur une grille, avec pour taille minimale 6 lignes et 7 colonnes.\n");
     printf("2. Le jeu consiste à placer tour à tour un pion dans une colonne de la grille.\n");
     printf("3. Le but du jeu est d'aligner en premier 4 pions de sa couleur horizontalement, verticalement ou en diagonale.\n");
+    printf("4. Si la grille est remplie sans qu'aucun joueur n'ait aligné 4 pions, la partie se termine par un match nul.\n");
+
 
     printf("\n\t\033[1;31mREGLES DU JEU :\033[0m\n");
 
     printf("1. Les joueurs jouent à tour de rôle, en commençant par le joueur courant(joueur connecté) utilisant le symbole \033[1;34mX\033[0m.\n");
     printf("2. Lors de son tour, un joueur choisit une colonne où il souhaite placer son pion.\n");
-    printf("3. Le pion tombe dans la colonne choisie et occupe la position la plus basse disponible.\n");
-    printf("4. Si la grille est remplie sans qu'aucun joueur n'ait aligné 4 pions, la partie se termine par un match nul.\n");
+    printf("3. Le pion tombe dans la colonne choisie et occupe la case vide la plus basse disponible.\n");
+    printf("4. Un joueur ne peut interrompre qu'une seule partie en cours à la fois. \n S'il tente d'en interrompre une nouvelle, il lui sera demandé soit d'annuler et continuer la partie, soit de valider et supprimer l'ancienne partie interrompue.\n");
+   
 
     printf("\n\t\033[1;31mMODES DE JEU :\033[0m\n");
 
     printf("1. Mode 2 Joueurs : Deux joueurs humains s'affrontent en tour à tour:\n");
     printf("\t   - Le joueur courant saisit le pseudo du second joueur avant de commencer la partie.\n");
-    printf("\t   - Le joueur 1 utilise le symbole \033[1;34mX\033[0m.\n");
-    printf("\t   - Le joueur 2 utilise le symbole \033[1;31mO\033[0m.\n");
-    printf("\t   - Les joueurs disposent chacun de %d secondes (temps par defaut) pour jouer leur coup.\n\n", TIMER_PLAY);
+    printf("\t   - Les joueurs disposent chacun de \033[1;31m%d secondes\033[0m (temps par defaut) pour jouer leur coup.\n\n", TIMER_PLAY);
 
     printf("2. Mode Joueur vs IA : Un joueur humain affronte l'IA(joueur machine)de niveau Facile ou Moyen:\n");
-    printf("\t   - Le joueur courant utilise le symbole \033[1;34mX\033[0m.\n");
-    printf("\t   - L'IA utilise le symbole \033[1;31mO\033[0m.\n");
     printf("\t   - Ici, le temps de jeu n'est pas limité pour le joueur humain.\n");
     printf("\t   - Niveau Facile : L'IA choisit un coup aléatoire parmi les colonnes disponibles.\n");
     printf("\t   - Niveau Moyen : L'IA analyse la grille pour bloquer les coups gagnants de l'adversaire et tente \n de créer ses propres opportunités de victoire.\n");
 
     printf("\n\t\033[1;31mOPTIONS SUPPLEMENTAIRES :\033[0m\n");
-    printf("1. Le joueur courant peut interrompre la partie en cours à tout moment en appuyant '\033[1;31mq\033[0m' sur le clavier pour quitter.\n");
+    printf("1. Un joueur peut interrompre la partie en cours à tout moment en appuyant sur '\033[1;31m0\033[0m' au clavier pour sauvegarder et quitter.\n");
     printf("2. Sauvegarde de Partie : À la fin de chaque partie, les informations de la partie(coups des joueurs et durée totale) \n sont sauvegardées dans le fichier de configuration du profil du joueur courant.\n");
     printf("3. Chargement de Partie : Les joueurs peuvent charger et reprendre des parties interrompues à partir de leur profil.\n\n");
 
     printf("4. Une fois connecté, on peut:\n");
-    printf("\t   - Modifier ses paramètres de configurations(taille de la grille, temps par coup).\n");
+    printf("\t   - Modifier ses paramètres de configurations(taille de la grille, temps par coup, forme des pions).\n");
     printf("\t   - Changer d'utilisateur courant sans quitter le jeu.\n");
     printf("\t   - Visualiser les parties sauvegardées coup par coup avec la durée totale de la partie\n");
 

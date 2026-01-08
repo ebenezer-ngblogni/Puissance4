@@ -27,46 +27,37 @@ void getCoup(int isPlayer, int coup, Save **saves){
     // return n;
 }
 
-// Enregistrement de la liste des sauvegardes dans le fichier de configuration associe au joueur
-//
-// Ajout de la date et de l'heure de la partie, du pseudo de l'adversaire, et du temps total de la partie
-
-
+/* Enregistrement de la liste des sauvegardes dans le fichier 
+  de configuration associe au joueur.
+  Ajout de la date et de l'heure de la partie, du pseudo de l'adversaire, 
+  et du temps total de la partie
+*/
 void saveIntoFile(Save *saves, Profil p, char *pseudo_adv, long score_time, char *message_victoire) {
     char nom_fichier[256];
     sprintf(nom_fichier, "files/%s.config.txt", p.pseudo);
 
+    // Obtention de la date et de l'heure actuelles
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
 
     FILE * f = fopen(nom_fichier, "a+");
 
+    // Vérification de l'ouverture du fichier
     if (f == NULL) {
         printf("Erreur: Impossible d'ouvrir/creer le fichier de profil. Verifiez que le dossier 'files' existe.\n");
         return;
     }
 
     // Ecriture de l'entete de la sauvegarde avec la date et l'adversaire
-    if(p.mode_jeu){
-        fprintf(f, "Partie jouee contre %s le %02d/%02d/%04d à %02d:%02d:%02d\n",
-            pseudo_adv,
-            t->tm_mday,
-            t->tm_mon + 1,
-            t->tm_year + 1900,
-            t->tm_hour,
-            t->tm_min,
-            t->tm_sec);
-    }
-    else{
-        fprintf(f, "Partie jouee contre %s le %02d/%02d/%04d à %02d:%02d:%02d\n",
-            pseudo_adv,
-            t->tm_mday,
-            t->tm_mon + 1,
-            t->tm_year + 1900,
-            t->tm_hour,
-            t->tm_min,
-            t->tm_sec);
-    }
+    fprintf(f, "Partie jouee contre %s le %02d/%02d/%04d à %02d:%02d:%02d\n",
+        pseudo_adv,
+        t->tm_mday,
+        t->tm_mon + 1,
+        t->tm_year + 1900,
+        t->tm_hour,
+        t->tm_min,
+        t->tm_sec);
+    
 
     // Ecriture des coups
     while (saves != NULL) {
@@ -109,7 +100,7 @@ void newGrid(int table[][2],char *message, int nbre_coups,int line, int col, Pro
 void loadGame(Profil p){
     char nom_fichier[256];
     char line[256];
-    char message[256];
+    char message_partie[256];
     char message_victoire[256];
     int nb_parties = 0;
     int choice, index_choice=0, index=0, table[100][2];
@@ -166,7 +157,7 @@ void loadGame(Profil p){
             index++;
             index_choice= (index == choice) ? 1 : 0;
             if(index == choice){
-                strcpy(message, line);
+                strcpy(message_partie, line);
             }
             continue;
         }
@@ -195,7 +186,7 @@ void loadGame(Profil p){
     }
     fclose(f);
 
-    newGrid(table, message, nb_coups, p.grille_lignes, p.grille_cols,p , message_victoire);
+    newGrid(table, message_partie, nb_coups, p.grille_lignes, p.grille_cols,p , message_victoire);
     utils_pause_to_continue();
     return;
 }
@@ -272,6 +263,7 @@ int savePausedGame(char **grid, int ligne, int col, Profil p,
 }
 
 // Chargement de l'état d'une partie en pause
+// 
 PausedGame* loadPausedGameState(Profil p) {
     char nom_fichier[256];
     sprintf(nom_fichier, "files/%s.pause.txt", p.pseudo);

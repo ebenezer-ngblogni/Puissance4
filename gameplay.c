@@ -60,7 +60,6 @@ A chaque tour, un joueur a un temps limité pour jouer son coup.
 A la fin de la partie, les informations de la partie sont sauvegardées dans le fichier de configuration du profil.
 Et la grille est liberée de la mémoire.
 */
-
 void twoPlayer(Profil p)
 {
       int line = p.grille_lignes, col = p.grille_cols;
@@ -77,6 +76,7 @@ void twoPlayer(Profil p)
       Save *saves = NULL;
       twoPlayerCore(grid, line, col, p, pseudo_adv, saves, 1, 0);
 }
+
 
 void twoPlayerCore(char **grid, int line, int col, Profil p, char *pseudo_adv, Save *saves, int joueur_actuel, long temps_deja_ecoule)
 {
