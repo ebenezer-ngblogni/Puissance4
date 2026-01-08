@@ -57,12 +57,12 @@ void application_start() {
                     }  
                     else if (mode_jeu == 2){
                         printf(" 1- Facile\n");
-                        printf(" 2- Moyen\n");
+                        printf(" 2- Difficile\n");
                         int niveau_ia = utils_get_int();
                         if (niveau_ia == 1)
                             playerVsIa(profil_actuel, FACILE); // Lancer une partie PvIA(joueur contre IA, niveau facile)
                         else if (niveau_ia == 2)
-                            playerVsIa(profil_actuel, MOYEN); // Lancer une partie PvIA(joueur contre IA, niveau moyen)
+                            playerVsIa(profil_actuel, DIFFICILE); // Lancer une partie PvIA(joueur contre IA, niveau difficile)
                         else
                             printf("\n-> Choix invalide. Retour au menu principal.\n");
                     } 

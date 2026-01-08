@@ -40,11 +40,11 @@ void playerVsIa(Profil p, NIVEAU lvl);
 // Fonctionnalité de l'IA de niveau facile
 void IAEasy(Profil p, char **grid, Save **saves);
 
-// Fonctionnalité de l'IA de niveau moyen
-void IAMedium(Profil p, char **grid, Save **saves);
+// Fonctionnalité de l'IA de niveau difficile
+void IAHard(Profil p, char **grid, Save **saves);
 
-// Fonction qui retourne le meilleur coup pour l'IA de niveau moyen
-int BestChoiceMedium(int line, int col, char **grid);
+// Fonction qui retourne le meilleur coup pour l'IA de niveau difficile
+int BestChoiceHard(int line, int col, char **grid);
 
 // Supprime le dernier coup joué dans une colonne donnée
 char **dismissShot(char **grid, int line,  int coup);

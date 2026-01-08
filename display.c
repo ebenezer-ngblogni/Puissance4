@@ -148,12 +148,12 @@ void rulesGame(){
     printf("\t   - Le joueur 2 utilise le symbole \033[1;31mO\033[0m.\n");
     printf("\t   - Les joueurs disposent chacun de %d secondes (temps par defaut) pour jouer leur coup.\n\n", TIMER_PLAY);
 
-    printf("2. Mode Joueur vs IA : Un joueur humain affronte l'IA(joueur machine)de niveau Facile ou Moyen:\n");
+    printf("2. Mode Joueur vs IA : Un joueur humain affronte l'IA(joueur machine)de niveau Facile ou Difficile:\n");
     printf("\t   - Le joueur courant utilise le symbole \033[1;34mX\033[0m.\n");
     printf("\t   - L'IA utilise le symbole \033[1;31mO\033[0m.\n");
     printf("\t   - Ici, le temps de jeu n'est pas limité pour le joueur humain.\n");
     printf("\t   - Niveau Facile : L'IA choisit un coup aléatoire parmi les colonnes disponibles.\n");
-    printf("\t   - Niveau Moyen : L'IA analyse la grille pour bloquer les coups gagnants de l'adversaire et tente \n de créer ses propres opportunités de victoire.\n");
+    printf("\t   - Niveau Difficile : L'IA analyse la grille pour bloquer les coups gagnants de l'adversaire et tente \n de créer ses propres opportunités de victoire.\n");
 
     printf("\n\t\033[1;31mOPTIONS SUPPLEMENTAIRES :\033[0m\n");
     printf("1. Le joueur courant peut interrompre la partie en cours à tout moment en appuyant '\033[1;31mq\033[0m' sur le clavier pour quitter.\n");

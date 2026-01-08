@@ -246,7 +246,7 @@ int savePausedGame(char **grid, int ligne, int col, Profil p,
     } else {
         // Mode IA : stocker niveau
         char niveau_str[20];
-        sprintf(niveau_str, "IA-%s", niveau_ia == 1 ? "FACILE" : "MOYEN");
+        sprintf(niveau_str, "IA-%s", niveau_ia == 1 ? "FACILE" : "DIFFICILE");
         fprintf(f, "%s %ld %d\n", niveau_str, temps_ecoule, joueur_actuel);
     }
 
@@ -314,7 +314,7 @@ PausedGame* loadPausedGameState(Profil p) {
     if (pg->mode_jeu == 0) {
         if (strstr(pg->adversaire, "FACILE")) {
             pg->niveau_ia = 1;
-        } else if (strstr(pg->adversaire, "MOYEN")) {
+        } else if (strstr(pg->adversaire, "DIFFICILE")) {
             pg->niveau_ia = 2;
         }
     } else {
@@ -396,7 +396,7 @@ int resumePausedGame(Profil p) {
     if (pg->mode_jeu == 1) {
         twoPlayerCore(grid, pg->grille_lignes, pg->grille_cols, p, pg->adversaire, pg->saves, pg->joueur_actuel, pg->temps_ecoule);
     } else {
-        NIVEAU lvl = (pg->niveau_ia == 1) ? FACILE : MOYEN;
+        NIVEAU lvl = (pg->niveau_ia == 1) ? FACILE : DIFFICILE;
         playerVsIaCore(grid, pg->grille_lignes, pg->grille_cols, p, lvl, pg->saves, pg->joueur_actuel, pg->temps_ecoule);
     }
 

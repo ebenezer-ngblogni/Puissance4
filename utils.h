@@ -31,7 +31,7 @@
 typedef enum niveau
 {
     FACILE,
-    MOYEN
+    DIFFICILE
 } NIVEAU;
 
 // Efface l'écran (multi-plateforme)

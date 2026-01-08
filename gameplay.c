@@ -217,7 +217,7 @@ void twoPlayerCore(char **grid, int line, int col, Profil p, char *pseudo_adv, S
 }
 
 /*Fonctionnalité du mode Joueur contre IA. La fonction prend en parametre le profil du joueur courant
-et le niveau de l'IA (facile, moyen, difficile).
+et le niveau de l'IA (facile, difficile).
 
 */
 void playerVsIa(Profil p, NIVEAU lvl)
@@ -246,7 +246,7 @@ void playerVsIaCore(char **grid, int line, int col, Profil p, NIVEAU lvl, Save *
     if (lvl == FACILE) {
         strcpy(pseudo_adv, "IA - FACILE");
     } else {
-        strcpy(pseudo_adv, "IA - MOYEN");
+        strcpy(pseudo_adv, "IA - DIFFICILE");
     }
 
     if (temps_deja_ecoule > 0) {
@@ -345,7 +345,7 @@ void playerVsIaCore(char **grid, int line, int col, Profil p, NIVEAU lvl, Save *
                 IAEasy(p, grid, &saves);
                 break;
 
-            case MOYEN:
+            case DIFFICILE:
                 IAMedium(p, grid, &saves);
                 break;
 
@@ -413,8 +413,8 @@ void IAEasy(Profil p, char **grid, Save **saves)
 
 }
 
-// Fonctionnalité de l'IA de niveau moyen
-void IAMedium(Profil p, char **grid, Save **saves)
+// Fonctionnalité de l'IA de niveau difficile
+void IAHard(Profil p, char **grid, Save **saves)
 {
     int line = p.grille_lignes, col = p.grille_cols, coup;
     struct timespec t = {1, 500}; // 1 sec et 500 nanosecondes
@@ -424,7 +424,7 @@ void IAMedium(Profil p, char **grid, Save **saves)
     // Choix du coup
     do
     {
-        coup = BestChoiceMedium(line, col, grid);
+        coup = BestChoiceHard(line, col, grid);
     } while (grid[0][coup - 1] != ' ');
 
     getCoup(0, coup, saves);
@@ -444,8 +444,8 @@ void IAMedium(Profil p, char **grid, Save **saves)
 
 }
 
-// Fonction qui retourne le meilleur coup pour l'IA de niveau moyen
-int BestChoiceMedium(int line, int col, char** grid){
+// Fonction qui retourne le meilleur coup pour l'IA de niveau difficile
+int BestChoiceHard(int line, int col, char** grid){
     int i,j = 0;
     // Initialisation du générateur de nombres aléatoires pour le choix aléatoire du coup de l'IA
     srand(time(NULL));

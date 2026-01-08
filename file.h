@@ -32,7 +32,7 @@ struct paused_game {
     float temps_par_coup;
     int forme_pions;
     int mode_jeu;         // 1=PvP, 0=PvIA
-    int niveau_ia;        // 0 pour PvP, 1=FACILE, 2=MOYEN
+    int niveau_ia;        // 0 pour PvP, 1=FACILE, 2=DIFFICILE
     long temps_ecoule;    // en secondes
     int joueur_actuel;    // 0 ou 1
     char *grille_serialisee;
