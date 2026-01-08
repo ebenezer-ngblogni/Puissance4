@@ -2,7 +2,7 @@
 #include "display.h"
 #include "profil.h"
 #include "utils.h"
-#include "file.c"
+#include "file.h"
 
 /*Petite pause pour permettre au joueur de voir les messages
  avant le rafraichissement de l'ecran
@@ -346,7 +346,7 @@ void playerVsIaCore(char **grid, int line, int col, Profil p, NIVEAU lvl, Save *
                 break;
 
             case DIFFICILE:
-                IAMedium(p, grid, &saves);
+                IAHard(p, grid, &saves);
                 break;
 
             default:

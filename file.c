@@ -1,5 +1,8 @@
 #include "file.h"
 #include "utils.h"
+#include "display.h"
+#include "gameplay.h"
+
 
 
 
@@ -27,9 +30,9 @@ void getCoup(int isPlayer, int coup, Save **saves){
     // return n;
 }
 
-/* Enregistrement de la liste des sauvegardes dans le fichier 
+/* Enregistrement de la liste des sauvegardes dans le fichier
   de configuration associe au joueur.
-  Ajout de la date et de l'heure de la partie, du pseudo de l'adversaire, 
+  Ajout de la date et de l'heure de la partie, du pseudo de l'adversaire,
   et du temps total de la partie
 */
 void saveIntoFile(Save *saves, Profil p, char *pseudo_adv, long score_time, char *message_victoire) {
@@ -57,7 +60,7 @@ void saveIntoFile(Save *saves, Profil p, char *pseudo_adv, long score_time, char
         t->tm_hour,
         t->tm_min,
         t->tm_sec);
-    
+
 
     // Ecriture des coups
     while (saves != NULL) {
@@ -151,7 +154,7 @@ void loadGame(Profil p){
     // Si non, on passe a la ligne suivante
 
     // repositionne le curseur au début du fichier
-    rewind(f);  
+    rewind(f);
     while(fgets(line, sizeof(line), f)) {
         if(strncmp(line, "Partie", 6) == 0) {
             index++;
@@ -176,7 +179,7 @@ void loadGame(Profil p){
                 table[nb_coups][0] = score;
                 table[nb_coups][1] = score_time;
                 nb_coups++;
-            
+
             }else {
                 strcpy(message_victoire, line);
                 // condition d'arrêt : nouvelle partie ou fin de fichier
@@ -263,7 +266,7 @@ int savePausedGame(char **grid, int ligne, int col, Profil p,
 }
 
 // Chargement de l'état d'une partie en pause
-// 
+//
 PausedGame* loadPausedGameState(Profil p) {
     char nom_fichier[256];
     sprintf(nom_fichier, "files/%s.pause.txt", p.pseudo);
@@ -281,7 +284,7 @@ PausedGame* loadPausedGameState(Profil p) {
         return NULL;
     }
 
-    char line[512]; 
+    char line[512];
 
     // Lecture du marqueur PAUSE_GAME
     if (!fgets(line, sizeof(line), f) || strncmp(line, "PAUSE_GAME", 10) != 0) {
