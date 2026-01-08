@@ -60,7 +60,6 @@ A chaque tour, un joueur a un temps limité pour jouer son coup.
 A la fin de la partie, les informations de la partie sont sauvegardées dans le fichier de configuration du profil.
 Et la grille est liberée de la mémoire.
 */
-
 void twoPlayer(Profil p)
 {
       int line = p.grille_lignes, col = p.grille_cols;
@@ -77,6 +76,7 @@ void twoPlayer(Profil p)
       Save *saves = NULL;
       twoPlayerCore(grid, line, col, p, pseudo_adv, saves, 1, 0);
 }
+
 
 void twoPlayerCore(char **grid, int line, int col, Profil p, char *pseudo_adv, Save *saves, int joueur_actuel, long temps_deja_ecoule)
 {
@@ -112,16 +112,16 @@ void twoPlayerCore(char **grid, int line, int col, Profil p, char *pseudo_adv, S
             while (1){
                 time_t now = time(NULL);
                 long past_time = now - start_time;
-
+                long temps_par_coup = (long)p.temps_par_coup;
                 // Si le joueur ne joue pas dans le temps imparti, son tour est passe
                 if (past_time > p.temps_par_coup) {
                     isPlayer1 = isPlayer1 ? 1 : 0;
                     break;
                 }
 
-                printf("\r %s entrez votre colonne (ou '0' pour pauser) (%d sec: %ld): ",
+                printf("\r %s entrez votre colonne (ou '0' pour pauser) (%ld sec: %ld): ",
                         isPlayer1 ? p.pseudo : pseudo_adv,
-                        p.temps_par_coup, p.temps_par_coup - past_time);
+                        temps_par_coup, temps_par_coup - past_time);
                 fflush(stdout);
 
                 if (waitToPlay(&coup, 1)) {
@@ -150,7 +150,7 @@ void twoPlayerCore(char **grid, int line, int col, Profil p, char *pseudo_adv, S
             if ((coup < 1 || coup > col) && coup != -1){
                 printf("\n Coup invalide\n");
                 pauseToDisplay();
-                isPlayer1 = isPlayer1 ? 0 : 1;
+                isPlayer1 = isPlayer1 ? 1 : 0;
                 valid = 0;
 
             }
@@ -158,7 +158,7 @@ void twoPlayerCore(char **grid, int line, int col, Profil p, char *pseudo_adv, S
             else if ((grid[0][coup - 1] != ' ') && coup != -1){
                 printf("\n Cette colonne est pleine. Jouez ailleurs!\n");
                 pauseToDisplay();
-                isPlayer1 = isPlayer1 ? 0 : 1;
+                isPlayer1 = isPlayer1 ? 1 : 0;
                 valid = 0;
             } else{
                 valid = 1;
