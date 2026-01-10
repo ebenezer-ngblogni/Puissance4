@@ -215,14 +215,27 @@ int savePausedGame(char **grid, int ligne, int col, Profil p,
         printf("Voulez-vous vraiment ecraser l'ancienne partie ? (O/N) : ");
 
         char reponse[10];
-        utils_get_secure_string(reponse, 10);
+        int valid_reponse = 0;
+
+        // Boucle de validation pour forcer O ou N uniquement
+        while (!valid_reponse) {
+            utils_get_secure_string(reponse, 10);
+
+            // Vérifier si c'est exactement O, o, N, ou n (un seul caractère)
+            if ((reponse[0] == 'O' || reponse[0] == 'o' || reponse[0] == 'N' || reponse[0] == 'n') && reponse[1] == '\0') {
+                valid_reponse = 1;
+            } else {
+                printf("\nReponse invalide. Veuillez entrer 'O' pour Oui ou 'N' pour Non : ");
+            }
+        }
 
         // Si l'utilisateur refuse
-        if (reponse[0] != 'O' && reponse[0] != 'o') {
+        if (reponse[0] == 'N' || reponse[0] == 'n') {
             printf("\n-> Mise en pause annulee. La partie continue.\n");
             utils_pause_to_continue();
             return 0;  // Sauvegarde annulée
         }
+
 
         printf("\n-> Ancienne partie en pause ecrasee.\n");
     }
@@ -246,7 +259,7 @@ int savePausedGame(char **grid, int ligne, int col, Profil p,
     } else {
         // Mode IA : stocker niveau
         char niveau_str[20];
-        sprintf(niveau_str, "IA-%s", niveau_ia == 1 ? "FACILE" : "DIFFICILE");
+        sprintf(niveau_str, "IA-%s", niveau_ia == FACILE ? "FACILE" : "DIFFICILE");
         fprintf(f, "%s %ld %d\n", niveau_str, temps_ecoule, joueur_actuel);
     }
 
