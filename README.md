@@ -162,7 +162,7 @@ Partie jouee contre <adversaire> le DD/MM/YYYY à HH:MM:SS
 
 📝 Licence
 
-Projet éducatif - Utilisation libre dans un cadre académique.
+Projet tutoré par Mme Nisrine BAJJA (Ingénieur en IA) - Utilisation libre dans un cadre académique.
 
 ---
 Bon jeu ! Que le meilleur gagne ! 🏆
