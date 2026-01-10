@@ -55,21 +55,90 @@ Ce projet implémente le jeu classique du Puissance 4 avec une interface en lign
 ```bash
 gcc -o puissance4 main.c menu.c gameplay.c display.c file.c profil.c utils.c -std=c99
 ./puissance4
-
-Windows
-
+```
+### Windows
+```bash
 gcc -o puissance4.exe main.c menu.c gameplay.c display.c file.c profil.c utils.c -std=c99
 puissance4.exe
+```
 
-Utilisation
+## Utilisation
 
-Démarrage
+### Démarrage
 
 1. Lancez le programme
 2. Créez un profil ou connectez-vous avec un profil existant
 3. Choisissez un mode de jeu dans le menu principal
 
-Menu principal
+### Menu principal
+
+# Puissance 4
+
+Jeu de Puissance 4 développé en C, en ligne de commande. Le projet propose :
+
+- un mode joueur vs joueur (PvP) avec timer par coup,
+- un mode joueur vs IA (facile / difficile),
+- la gestion de profils, la sauvegarde et la reprise de parties.
+
+## Table des matières
+
+- [Description](#description)
+- [Fonctionnalités](#fonctionnalités)
+- [Prérequis](#prérequis)
+- [Installation et compilation](#installation-et-compilation)
+- [Utilisation](#utilisation)
+- [Structure du projet](#structure-du-projet)
+- [Configuration](#configuration)
+- [Licence](#licence)
+
+## Description
+
+Ce projet implémente le jeu classique du Puissance 4 avec une interface en ligne de commande. Il supporte les parties entre joueurs et contre une IA à plusieurs niveaux de difficulté.
+
+## Fonctionnalités
+
+- Modes de jeu :
+	- Joueur vs Joueur (PvP)
+	- Joueur vs IA — Facile (coups aléatoires) / Difficile (analyse de la grille)
+- Gestion de profils : création, sauvegarde de l'historique et statistiques
+- Personnalisation : taille de la grille, timer par coup (PvP), styles de pions
+- Sauvegarde et reprise : pause, reprise complète de l'état (grille, joueur courant, timer)
+- Interface : affichage coloré (Linux/Windows), grille numérotée, messages clairs
+
+## Prérequis
+
+- Compilateur C (GCC ou équivalent)
+- Système : Linux ou Windows
+- Bibliothèques standard : `stdio.h`, `stdlib.h`, `string.h`, `time.h`
+- Optionnel selon plateforme :
+	- Linux : `unistd.h`, `sys/select.h`, `ctype.h`
+	- Windows : `conio.h`, `windows.h`
+
+## Installation et compilation
+
+### Linux / macOS
+
+```bash
+gcc -o puissance4 main.c menu.c gameplay.c display.c file.c profil.c utils.c -std=c99
+./puissance4
+```
+
+### Windows (MinGW)
+
+```powershell
+gcc -o puissance4.exe main.c menu.c gameplay.c display.c file.c profil.c utils.c -std=c99
+./puissance4.exe
+```
+
+Remarque : ajustez les fichiers sources selon la configuration de votre projet si nécessaire.
+
+## Utilisation
+
+1. Lancez l'exécutable
+2. Créez ou sélectionnez un profil
+3. Choisissez un mode de jeu dans le menu principal
+
+Menu principal (exemple) :
 
 1. Jouer contre un autre joueur (PvP)
 2. Jouer contre l'IA - Facile
@@ -152,17 +221,19 @@ Fichiers de configuration
 - files/<pseudo>.config.txt : Historique complet des parties
 - files/<pseudo>.pause.txt : État de la partie en pause
 
-Format d'une partie sauvegardée :
+```
 Partie jouee contre <adversaire> le DD/MM/YYYY à HH:MM:SS
 <joueur> <colonne>
 <joueur> <colonne>
 ...
 2 <durée_totale>
 <message_de_victoire>
+```
 
-📝 Licence
+## Licence
 
 Projet tutoré par Mme Nisrine BAJJA (Ingénieur en IA) - Utilisation libre dans un cadre académique.
 
 ---
+
 Bon jeu ! Que le meilleur gagne ! 🏆
