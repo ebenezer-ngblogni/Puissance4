@@ -25,13 +25,43 @@ int waitToPlay(int *coup, int delay){
         time_t debut = time(NULL);
         while(time(NULL)-debut < delay){
             if(_kbhit()){
-                scanf("%d", coup);
+                char input[20];
+                if (fgets(input, sizeof(input), stdin) != NULL) {
+                    // Supprimer le '\n' de fin si présent
+                    input[strcspn(input, "\n")] = '\0';
+
+                    // Vérifier si c'est une demande de pause (P ou Q uniquement, seul caractère)
+                    if ((input[0] == 'P' || input[0] == 'p' || input[0] == 'Q' || input[0] == 'q') && input[1] == '\0') {
+                        *coup = -2;  // Code spécial pour pause
+                    }
+                    // Vérifier si c'est une chaîne vide
+                    else if (input[0] == '\0') {
+                        *coup = -1;  // Coup invalide (chaîne vide)
+                    }
+                    // Vérifier si toute la chaîne est numérique
+                    else {
+                        int i = 0;
+                        int is_numeric = 1;
+                        while (input[i] != '\0') {
+                            if (!isdigit(input[i])) {
+                                is_numeric = 0;
+                                break;
+                            }
+                            i++;
+                        }
+
+                        if (is_numeric && i > 0) {
+                            *coup = atoi(input);  // Convertir en nombre
+                        } else {
+                            *coup = -1;  // Coup invalide
+                        }
+                    }
+                }
                 return 1;
             }
             Sleep(50);
         }
         return 0;
-
 
     #else
         fd_set ensemble;
@@ -44,7 +74,38 @@ int waitToPlay(int *coup, int delay){
         int ret = select(STDIN_FILENO + 1, &ensemble, NULL, NULL, &temps);
 
         if (ret > 0) {
-            scanf("%d", coup);
+            char input[20];
+            if (fgets(input, sizeof(input), stdin) != NULL) {
+                // Supprimer le '\n' de fin si présent
+                input[strcspn(input, "\n")] = '\0';
+
+                // Vérifier si c'est une demande de pause (P ou Q uniquement, seul caractère)
+                if ((input[0] == 'P' || input[0] == 'p' || input[0] == 'Q' || input[0] == 'q') && input[1] == '\0') {
+                    *coup = -2;  // Code spécial pour pause
+                }
+                // Vérifier si c'est une chaîne vide
+                else if (input[0] == '\0') {
+                    *coup = -1;  // Coup invalide (chaîne vide)
+                }
+                // Vérifier si toute la chaîne est numérique
+                else {
+                    int i = 0;
+                    int is_numeric = 1;
+                    while (input[i] != '\0') {
+                        if (!isdigit(input[i])) {
+                            is_numeric = 0;
+                            break;
+                        }
+                        i++;
+                    }
+
+                    if (is_numeric && i > 0) {
+                        *coup = atoi(input);  // Convertir en nombre
+                    } else {
+                        *coup = -1;  // Coup invalide
+                    }
+                }
+            }
             return 1;
         }
         usleep(50);
@@ -66,7 +127,7 @@ void twoPlayer(Profil p)
       char pseudo_adv[50];
 
       printf("\n %s bonne partie :-)\n", p.pseudo);
-      printf("\n Entrer le pseudo de votre adversaire:\n");
+      printf("\n Entrer le pseudo de votre adversaire: ");
       utils_get_secure_string(pseudo_adv, 50);
 
       char **grid = createGrid(line, col);
@@ -119,14 +180,14 @@ void twoPlayerCore(char **grid, int line, int col, Profil p, char *pseudo_adv, S
                     break;
                 }
 
-                printf("\r %s entrez votre colonne (ou '0' pour pauser) (%ld sec: %ld): ",
+                printf("\r %s entrez votre colonne (ou 'P'/'Q' pour pauser) (%ld sec: %ld): ",
                         isPlayer1 ? p.pseudo : pseudo_adv,
                         temps_par_coup, temps_par_coup - past_time);
                 fflush(stdout);
 
                 if (waitToPlay(&coup, 1)) {
                     // Vérifier si l'utilisateur veut mettre en pause
-                    if (coup == 0) {
+                    if (coup == -2) {
                         printf("\n\n=== MISE EN PAUSE ===\n");
                         long temps_ecoule = time(NULL) - start_game;
                         int saved = savePausedGame(grid, line, col, p, pseudo_adv, 0, temps_ecoule, saves, isPlayer1);
@@ -147,7 +208,7 @@ void twoPlayerCore(char **grid, int line, int col, Profil p, char *pseudo_adv, S
 
 
             // Validation du coup
-            if ((coup < 1 || coup > col) && coup != -1){
+            if (coup == -1 || coup < 1 || coup > col){
                 printf("\n Coup invalide\n");
                 pauseToDisplay();
                 isPlayer1 = isPlayer1 ? 1 : 0;
@@ -155,7 +216,7 @@ void twoPlayerCore(char **grid, int line, int col, Profil p, char *pseudo_adv, S
 
             }
             // Si la colonne est pleine
-            else if ((grid[0][coup - 1] != ' ') && coup != -1){
+            else if (coup >= 1 && coup <= col && grid[0][coup - 1] != ' '){
                 printf("\n Cette colonne est pleine. Jouez ailleurs!\n");
                 pauseToDisplay();
                 isPlayer1 = isPlayer1 ? 1 : 0;
@@ -264,15 +325,18 @@ void playerVsIaCore(char **grid, int line, int col, Profil p, NIVEAU lvl, Save *
         if (isPlayer1)
           {
 
-              do
-              {
-                  printf("\n %s entrez votre colonne (ou '0' pour pauser) : ", p.pseudo);
+            do
+            {
+                printf("\n %s entrez votre colonne (ou 'P'/'Q' pour pauser) : ", p.pseudo);
 
-                  char input[20];
-                  fgets(input, sizeof(input), stdin);
+                char input[20];
+                fgets(input, sizeof(input), stdin);
 
-                  // Vérifier si pause demandée
-                if (input[0] == '0' || input[0] == 'P' || input[0] == 'p') {
+                // Supprimer le '\n' de fin si présent
+                input[strcspn(input, "\n")] = '\0';
+
+                // Vérifier si pause demandée
+                if ((input[0] == 'P' || input[0] == 'p' || input[0] == 'Q' || input[0] == 'q') && input[1] == '\0') {
                     printf("\n\n=== MISE EN PAUSE ===\n");
                     long temps_ecoule = time(NULL) - start_game;
                     int saved = savePausedGame(grid, line, col, p, pseudo_adv, lvl,
@@ -285,26 +349,52 @@ void playerVsIaCore(char **grid, int line, int col, Profil p, NIVEAU lvl, Save *
                         return;  // Quitter seulement si sauvegarde réussie
                     }
                     // Sinon, redemander le coup (continue dans le do-while)
+                    valid = 0;
+                    continue;
                 }
 
-                  coup = atoi(input);
+                // Vérifier si c'est une chaîne vide
+                if (input[0] == '\0') {
+                    printf("\n Coup invalide\n");
+                    valid = 0;
+                    continue;
+                }
 
-                  if (coup < 1 || coup > col)
-                  {
-                      printf("\n Coup invalide\n");
-                      valid = 0;
-                  }
-                  else if (grid[0][coup - 1] != ' ')
-                  {
-                      printf("\n Cette colonne est pleine. Jouez ailleurs!\n");
-                      pauseToDisplay();
-                      valid = 0;
-                  }else{
-                      valid = 1;
-                      // Enregistrer le coup dans la liste des sauvegardes
-                      getCoup(isPlayer1, coup, &saves);
-                  }
-              } while (!valid);
+                // Vérifier si toute la chaîne est numérique
+                int i = 0;
+                int is_numeric = 1;
+                while (input[i] != '\0') {
+                    if (!isdigit(input[i])) {
+                        is_numeric = 0;
+                        break;
+                    }
+                    i++;
+                }
+
+                if (!is_numeric) {
+                    printf("\n Coup invalide\n");
+                    valid = 0;
+                    continue;
+                }
+
+                coup = atoi(input); //atoi permet ici de convertir un string en integer
+
+                if (coup < 1 || coup > col)
+                {
+                    printf("\n Coup invalide\n");
+                    valid = 0;
+                }
+                else if (grid[0][coup - 1] != ' ')
+                {
+                    printf("\n Cette colonne est pleine. Jouez ailleurs!\n");
+                    pauseToDisplay();
+                    valid = 0;
+                }else{
+                    valid = 1;
+                    // Enregistrer le coup dans la liste des sauvegardes
+                    getCoup(isPlayer1, coup, &saves);
+                }
+            } while (!valid);
 
             if (IS_WIN)
             {
