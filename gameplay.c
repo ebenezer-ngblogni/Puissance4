@@ -160,10 +160,12 @@ void twoPlayerCore(char **grid, int line, int col, Profil p, char *pseudo_adv, S
 
     while (continu)
     {
+        time_t start_time = time(NULL);  // Timer unique pour ce tour
+
         do
         {
-            time_t start_time = time(NULL);
             coup = -1;
+            int timeout = 0;
 
             /*cette boucle affiche en continu le message avec un chrono decroissant
               l'utilisation du '\r' dans notre printf permet ainsi d'effacer la ligne precedente
@@ -176,7 +178,8 @@ void twoPlayerCore(char **grid, int line, int col, Profil p, char *pseudo_adv, S
                 long temps_par_coup = (long)p.temps_par_coup;
                 // Si le joueur ne joue pas dans le temps imparti, son tour est passe
                 if (past_time > p.temps_par_coup) {
-                    isPlayer1 = isPlayer1 ? 1 : 0;
+                    timeout = 1;
+                    isPlayer1 = isPlayer1 ? 0 : 1;
                     break;
                 }
 
@@ -206,6 +209,15 @@ void twoPlayerCore(char **grid, int line, int col, Profil p, char *pseudo_adv, S
                 }
             }
 
+            // Si timeout, sortir du do-while sans jouer de coup
+            if (timeout) {
+                printf("\n\n Temps ecoule !\n");
+                pauseToDisplay();
+                valid = 1;  // Sortir du do-while
+                coup = -3;  // Code spécial pour ne pas jouer de coup
+                break;
+            }
+
 
             // Validation du coup
             if (coup == -1 || coup < 1 || coup > col){
@@ -228,6 +240,11 @@ void twoPlayerCore(char **grid, int line, int col, Profil p, char *pseudo_adv, S
             }
         } while (!valid);
 
+        // Si timeout (coup == -3), ne pas jouer de coup, juste continuer
+        if (coup == -3) {
+            valid = 0;
+            continue;  // Retour au début du while(continu) avec le nouveau joueur
+        }
 
 
         if (IS_WIN)
