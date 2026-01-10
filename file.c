@@ -127,7 +127,9 @@ void loadGame(Profil p){
             printf("%d- %s", nb_parties, line);
         }
     }
-
+    if(nb_parties > 0){
+        printf("\n0- Retour au menu principal\n");
+    }
     if(nb_parties == 0){
         printf("Aucune partie encore jouee \n");
         fclose(f);
@@ -139,7 +141,11 @@ void loadGame(Profil p){
         printf("\nEntrez le numéro de la partie à visualiser : ");
         choice = utils_get_int();
 
-        if(choice < 1 || choice > nb_parties){
+        if(choice == 0){
+            fclose(f);
+            return;
+        }
+        if((choice < 1 || choice > nb_parties) && choice != 0){
             printf("\n Choix invalide. Veuillez reessayer.\n");
             valid = 0;
         }else{
