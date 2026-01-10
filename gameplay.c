@@ -568,20 +568,26 @@ int BestChoiceHard(int line, int col, char** grid){
 
     //on trouve le meilleur coup
     for (i = 1; i <= col; i++){
-        if((winPosition(wherePosition(gridTemp, line, i, 0), line, col, 'O'))){
-            freeGrid(gridTemp, line);
-            return i;
-        }else{
-            dismissShot(gridTemp, line, i);
+        // Vérifier que la colonne n'est pas pleine avant de tester
+        if (grid[0][i-1] == ' ') {
+            if((winPosition(wherePosition(gridTemp, line, i, 0), line, col, 'O'))){
+                freeGrid(gridTemp, line);
+                return i;
+            }else{
+                dismissShot(gridTemp, line, i);
+            }
         }
     }
 
     for (i = 1; i <= col; i++){
-        if((winPosition(wherePosition(gridTemp, line, i, 1), line, col, 'X'))){
-            freeGrid(gridTemp, line);
-            return i;
-        }else{
-            dismissShot(gridTemp, line, i);
+        // Vérifier que la colonne n'est pas pleine avant de tester
+        if (grid[0][i-1] == ' ') {
+            if((winPosition(wherePosition(gridTemp, line, i, 1), line, col, 'X'))){
+                freeGrid(gridTemp, line);
+                return i;
+            }else{
+                dismissShot(gridTemp, line, i);
+            }
         }
     }
 
