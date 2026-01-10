@@ -13,7 +13,7 @@ char **createGrid(int line, int col){
             printf("Erreur lors de l'allocation de la colonne\n");
         }
     }
-
+    
     for (int i = 0; i < line; i++){
         for(int j = 0; j < col; j++){
             // Initialisation des cases vides avec un espace
@@ -28,7 +28,7 @@ char **createGrid(int line, int col){
 void showGrid(char **grid, int line, int col, int forme_pions){
     int i,j,k;
 
-    printf("\n \033[1;34mOXO--- PUISSANCE 4 ---OXO\033[0m \n\n");
+    printf("\n \033[1;34mOXO--- PUISSANCE 4 ---OXO\033[0m \n\n ");
     
     //Affichage des indices des colonnes au-dessus de la grille
     for(i = 1; i <= col; i++){
@@ -40,14 +40,14 @@ void showGrid(char **grid, int line, int col, int forme_pions){
     for(i = 0; i <= line; i++ ){
         //tracage de ligne de la grille
         if(i != 0){
-            printf("+---+");
+            printf(" +---+");
             for(k =0; k< col-1; k++){
                 printf("---+");
             }
         }
 
         if(i < line){
-             printf("\n| ");
+             printf("\n | ");
             for(j =0; j< col; j++){
 
                 if (grid[i][j] == 'X') {
@@ -89,7 +89,7 @@ void showGrid(char **grid, int line, int col, int forme_pions){
             printf("\n");
         }
     }
-    printf("\n");
+    printf("\n ");
     //Affichage des indices des colonnes en-dessous de la grille
     for(i = 1; i <= col; i++){
         printf("  %d ", i);
