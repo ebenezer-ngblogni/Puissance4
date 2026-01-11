@@ -73,7 +73,7 @@ puissance4.exe
 ### Menu principal
 1. Nouvelle Partie
 	1. Jouer contre un autre joueur (PvP)
-	2. Jouer contre l'IA
+	2. Jouer contre l'IA (PvIA)
     	1. Facile
      	2. Difficile
 2. Modifier les paramètres
